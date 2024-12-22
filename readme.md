@@ -1,62 +1,110 @@
-# MERN Authentication Starter
+# DocHub - collaborative platform
 
-This is a starter app for a MERN stack application with authentication. This is for a SPA (Single Page Application) workflow that uses the [Vite](https://vite.dev) Build tool. This authentication workflow is based off of my [MERN Stack From Scratch | eCommerce](https://www.traversymedia.com/mern-stack-from-scratch) course.
+DocHub is a real-time Collaborative Workspace Platform where users can chat, video call, share files, and collaborate in virtual rooms. The system should support high traffic, ensure scalability, and include core functionalities of real-time interaction and multi-user collaboration.
 
-<img src="./frontend/public/screen.png" />
-
-It includes the following:
-
-- Backend API with Express & MongoDB
-- Routes for auth, logout, register, profile, update profile
-- JWT authentication stored in HTTP-only cookie
-- Protected routes and endpoints
-- Custom middleware to check JSON web token and store in cookie
-- Custom error middleware
-- React frontend to register, login, logout, view profile, and update profile
-- React Bootstrap UI library
-- React Toastify notifications
-
-## Usage
-
-- Create a MongoDB database and obtain your `MongoDB URI` - [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register)
-- Create a PayPal account and obtain your `Client ID` - [PayPal Developer](https://developer.paypal.com/)
-
-### Env Variables
-
-Rename the `.env.example` file to `.env` and add the following
+## Folder Structure
 
 ```
-NODE_ENV = development
-PORT = 5000
-MONGO_URI = your mongodb uri
-JWT_SECRET = 'abc123'
+root
+├── frontend
+└── backend
 ```
 
-Change the JWT_SECRET to what you want
+### Frontend
 
-### Install Dependencies (frontend & backend)
+The `frontend` folder contains the React-based user interface for DocHub.
 
+### Backend
+
+The `backend` folder contains the Node.js server that handles API requests, authentication, and database operations.
+
+---
+
+## Setup Instructions
+
+### Prerequisites
+
+1. **Node.js and npm**: Ensure that Node.js (>=14.x) and npm (>=6.x) are installed on your machine.
+2. **Database**: Set up MongoDB (local or cloud instance, e.g., MongoDB Atlas).
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd dochub
 ```
-npm install
-cd frontend
-npm install
-```
 
-### Run
+### 2. Backend Setup
 
-```
+1. Install dependencies:
 
-# Run frontend (:3000) & backend (:5000)
-npm run dev
+    ```bash
+    npm install
+    ```
 
-# Run backend only
-npm run server
-```
+2. Create a `.env` file in the root folder with the following variables:
 
-## Build & Deploy
+    ```env
+    NODE_ENV=yourReactAppPort
+    PORT=yourbackendport
+    MONGO_URI=your_mongo_database_uri
+    JWT_SECRET=your_jwt_secret
+    REACT_APP_PORT=yourReactAppPort
+    ```
 
-```
-# Create frontend prod build
-cd frontend
-npm run build
-```
+3. Start the server:
+    ```bash
+    npm run server
+    ```
+    The backend server should now be running at `http://localhost:yourbackendport`.
+
+### 3. Frontend Setup
+
+1. Navigate to the frontend folder:
+
+    ```bash
+    cd ./frontend
+    ```
+
+2. Install dependencies:
+
+    ```bash
+    npm install
+    ```
+
+3. Create a `.env` file in the `frontend` folder with the following variables:
+
+    ```env
+    REACT_APP_PORT=port
+    ```
+
+4. Start the development server:
+    ```bash
+    npm run client
+    ```
+    The frontend application should now be running at `http://localhost:reactport`.
+
+---
+
+## Additional Notes
+
+### Environment Variables
+
+-   Ensure all sensitive credentials like `MONGO_URI`, `JWT_SECRET`, and Cloudinary keys are stored securely and not committed to the repository.
+-   Use a `.env` file or environment variable management tools for production deployments.
+
+### Installations
+
+-   **Backend Dependencies**: Express, Mongoose, dotenv, bcryptjs, jsonwebtoken, etc.
+-   **Frontend Dependencies**: React, Axios, React Router, Redux Toolkit , bootstrap etc., etc.
+
+### Running in Production
+
+1. Build the frontend for production:
+    ```bash
+    cd frontend
+    npm run build
+    ```
+2. Serve the built frontend with the backend using a static file server.
+
+---
