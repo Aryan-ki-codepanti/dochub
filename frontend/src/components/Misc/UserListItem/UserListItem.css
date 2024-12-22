@@ -1,0 +1,15 @@
+.user-list-item {
+    background-color: #e8e8e8;
+    color: black;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.user-list-item:hover {
+    background-color: #38b2ac;
+    color: white;
+}
+
+.avatar {
+    cursor: pointer;
+}

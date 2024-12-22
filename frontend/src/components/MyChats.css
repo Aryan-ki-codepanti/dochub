@@ -1,0 +1,56 @@
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+.MyChatsBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+    width: 100%;
+}
+
+.MyChats-header {
+    font-family: "Work Sans", serif;
+    font-size: 28px;
+    padding-bottom: 1rem;
+    padding-inline: 1rem;
+}
+.MyChats-header button {
+    font-size: 17px;
+}
+
+.chatsContainer {
+    background: #f8f8f8;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.chatContainer-item {
+    cursor: pointer;
+    padding: 12px 8px;
+    border-radius: 0.5rem;
+}
+.chatContainer-item p {
+    font-size: 20px;
+    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .MyChatsBox {
+        display: flex !important;
+        width: 31%;
+    }
+    .MyChats-header {
+        font-size: 30px;
+    }
+    .MyChats-header button {
+        font-size: 10px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .MyChats-header button {
+        font-size: 17px;
+    }
+}

@@ -1,0 +1,26 @@
+.singleChatBox {
+    justify-content: space-between;
+    font-size: 28px;
+    font-family: "Work Sans";
+}
+.singleChatBox .arrow-left:hover {
+    background: #cacaca;
+}
+.singleChatBox .arrow-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: #e8e8e8;
+    padding: 0.2em;
+}
+
+@media (min-width: 768px) {
+    .singleChatBox {
+        font-size: 30px;
+    }
+
+    .singleChatBox .arrow-left {
+        display: none;
+    }
+}

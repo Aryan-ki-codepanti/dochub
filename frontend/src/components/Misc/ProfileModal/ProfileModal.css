@@ -1,0 +1,22 @@
+.profile-modal span {
+    font-family: "Work Sans";
+    font-size: 28px;
+}
+
+.viewIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: #e8e8e8;
+    padding: 0.2em;
+}
+.viewIcon:hover {
+    background: #cacaca;
+}
+
+@media (min-width: 768px) {
+    .profile-modal span {
+        font-size: 30px;
+    }
+}
