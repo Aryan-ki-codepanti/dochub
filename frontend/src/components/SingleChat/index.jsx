@@ -12,6 +12,7 @@ import {
     useAllMessagesMutation,
     useSendMessageMutation
 } from "../../slices/messageApiSlice";
+import ScrollableChat from "../ScrollableChat";
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     const { userInfo, chatInfo } = useSelector(state => state.auth); // {chats, selectedChat}
@@ -107,6 +108,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                 <UpdateGroupChatModal
                                     fetchAgain={fetchAgain}
                                     setFetchAgain={setFetchAgain}
+                                    fetchMessages={fetchMessages}
                                 />
                             </>
                         )}
@@ -115,12 +117,18 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         className="d-flex flex-column justify-content-end p-3 w-100 h-100 rounded overflow-y-hidden"
                         style={{ background: "#e8e8e8" }}
                     >
-                        {loading ? <Loader /> : <div>{/* messages */}</div>}
+                        {loading ? (
+                            <Loader />
+                        ) : (
+                            <div className="messages">
+                                <ScrollableChat messages={messages} />
+                            </div>
+                        )}
 
                         <Form.Control
                             type="text"
                             placeholder="Enter a message ..."
-                            className="mt -3"
+                            className="mt-3"
                             required
                             value={newMessage}
                             onKeyDown={handleSendMessage}

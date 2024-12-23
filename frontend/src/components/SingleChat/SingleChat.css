@@ -15,6 +15,13 @@
     padding: 0.2em;
 }
 
+.messages {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
 @media (min-width: 768px) {
     .singleChatBox {
         font-size: 30px;

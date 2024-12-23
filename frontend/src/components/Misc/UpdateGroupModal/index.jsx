@@ -16,7 +16,12 @@ import { useSearchFriendsMutation } from "../../../slices/friendsApiSlice";
 import UserListItem from "../UserListItem";
 import Loader from "../../Loader";
 
-const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, children }) => {
+const UpdateGroupChatModal = ({
+    fetchAgain,
+    setFetchAgain,
+    children,
+    fetchMessages
+}) => {
     const { userInfo, chatInfo } = useSelector(state => state.auth);
     const [groupChatName, setGroupChatName] = useState("");
     const [search, setSearch] = useState("");
@@ -93,6 +98,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, children }) => {
                     setChatInfo({ ...chatInfo, selectedChat: removedChat })
                 );
             }
+            fetchMessages();
             setFetchAgain(!fetchAgain);
         } catch (error) {
             toast.error(`Unable to remove ${u.name} from group`);
