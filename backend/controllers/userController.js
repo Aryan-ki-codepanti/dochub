@@ -122,10 +122,41 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     }
 });
 
+// GOOGLE AUTHENTICATION of USER
+// @desc    From google's sign in create user and return or return  user if already exist with same email
+// @route   POST /api/users/auth/google
+// @access  Public
+const googleAuthUser = asyncHandler(async (req, res) => {
+    const { name, email, pic } = req.body;
+
+    let user = null;
+    user = await User.findOne({ email }).select("-password");
+
+    // create if not present
+    if (!user) {
+        user = await User.create({
+            name,
+            email,
+            pic,
+            dob: new Date("2000-01-01"), // default
+            gender: "M" //default
+        });
+    }
+
+    if (user) {
+        generateToken(res, user._id);
+        res.status(200).json(user);
+    } else {
+        res.status(400);
+        throw new Error("Invalid user data for google sign in");
+    }
+});
+
 export {
     authUser,
     registerUser,
     logoutUser,
     getUserProfile,
-    updateUserProfile
+    updateUserProfile,
+    googleAuthUser
 };
