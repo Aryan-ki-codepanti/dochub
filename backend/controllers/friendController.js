@@ -43,7 +43,7 @@ const getAllPeople = asyncHandler(async (req, res) => {
         if (friends?.length > 0) {
             const friendsDetails = await User.find(
                 { _id: { $in: friends.map(x => x.user) } }, // Match friends by IDs
-                { name: 1, gender: 1 } // Select only the name and gender fields
+                { name: 1, gender: 1, pic: 1, email: 1 } // Select only the name and gender fields
             )
                 .select("-password")
                 .lean();
@@ -64,7 +64,7 @@ const getAllPeople = asyncHandler(async (req, res) => {
         const query = ids && ids.length > 0 ? { _id: { $nin: ids } } : {}; // Exclude IDs if provided
         let moreUsers = await User.find(query) // Fetch users
             .limit(10) // Limit results to 10
-            .select("name gender") // Select desired fields
+            .select("name gender pic email") // Select desired fields
             .lean();
 
         ans.push(...moreUsers);

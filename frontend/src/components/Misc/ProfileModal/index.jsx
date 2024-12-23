@@ -35,7 +35,10 @@ const ProfileModal = ({ user, children }) => {
                     style={{ height: "180px" }}
                 >
                     <img
-                        src={user.gender === "M" ? maleAvatar : femaleAvatar}
+                        src={
+                            user.pic ||
+                            (user.gender === "M" ? maleAvatar : femaleAvatar)
+                        }
                         className="border border-black"
                         alt={user.name}
                         style={{

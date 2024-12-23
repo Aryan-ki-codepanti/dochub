@@ -37,9 +37,10 @@ const ScrollableChat = ({ messages }) => {
                                     name={m.sender.name}
                                     size="sm"
                                     src={
-                                        m.sender.gender === "M"
+                                        m.sender.pic ||
+                                        (m.sender.gender === "M"
                                             ? maleAvatar
-                                            : femaleAvatar
+                                            : femaleAvatar)
                                     }
                                 />
                             </span>
