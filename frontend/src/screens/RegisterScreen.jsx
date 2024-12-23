@@ -8,6 +8,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRegisterMutation } from "../slices/usersApiSlice";
 import { setCredentials } from "../slices/authSlice";
 import { toast } from "react-toastify";
+import OAuth from "../components/OAuth";
+
+const OrDivider = () => {
+    return (
+        <Row className="align-items-center my-3">
+            <Col>
+                <hr className="border-secondary" />
+            </Col>
+            <Col xs="auto">
+                <span className="text-muted">OR</span>
+            </Col>
+            <Col>
+                <hr className="border-secondary" />
+            </Col>
+        </Row>
+    );
+};
 
 const RegisterScreen = () => {
     const [name, setName] = useState("");
@@ -82,6 +99,8 @@ const RegisterScreen = () => {
     return (
         <FormContainer>
             <h1>Register</h1>
+            <OAuth />
+            <OrDivider />
             <Form onSubmit={submitHandler}>
                 <Form.Group className="my-2" controlId="name">
                     <Form.Label>Name</Form.Label>
