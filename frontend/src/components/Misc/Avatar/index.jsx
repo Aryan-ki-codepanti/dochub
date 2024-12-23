@@ -4,7 +4,7 @@ import "./Avatar.css";
 
 const Avatar = ({ name, src, size = "md", cursor = "pointer" }) => {
     const sizes = {
-        sm: "40px",
+        sm: "35px",
         md: "60px",
         lg: "100px"
     };
