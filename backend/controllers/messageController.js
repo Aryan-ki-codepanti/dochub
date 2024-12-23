@@ -10,7 +10,7 @@ import Chat from "../models/chatModel.js";
 const allMessages = asyncHandler(async (req, res) => {
     try {
         const messages = await Message.find({ chat: req.params.chatId })
-            .populate("sender", "name email")
+            .populate("sender", "name email gender")
             .populate("chat");
         res.json(messages);
     } catch (error) {
@@ -39,7 +39,7 @@ const sendMessage = asyncHandler(async (req, res) => {
     try {
         let message = await Message.create(newMessage);
 
-        message = await message.populate("sender", "name pic");
+        message = await message.populate("sender", "name email gender");
         message = await message.populate("chat");
         message = await User.populate(message, {
             path: "chat.users",
