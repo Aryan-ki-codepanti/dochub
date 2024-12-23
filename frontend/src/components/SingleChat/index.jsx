@@ -16,7 +16,10 @@ import ScrollableChat from "../ScrollableChat";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 
+import animationGIF from "../../assets/Animation.gif";
+
 const BACKEND_ENDPOINT = "http://localhost:8000";
+
 let socket = null,
     selectedChatCompare = null;
 
@@ -182,7 +185,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             </div>
                         )}
 
-                        {isTyping && <span>Typing...</span>}
+                        {isTyping && (
+                            <div className="mt-2">
+                                <img
+                                    src={animationGIF}
+                                    width={50}
+                                    style={{ objectFit: "cover" }}
+                                />
+                            </div>
+                        )}
                         <Form.Control
                             type="text"
                             placeholder="Enter a message ..."
