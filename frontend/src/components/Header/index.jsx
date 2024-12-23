@@ -4,8 +4,14 @@ import { FaSignInAlt, FaSignOutAlt, FaRocketchat } from "react-icons/fa";
 import { LinkContainer } from "react-router-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useLogoutMutation } from "../slices/usersApiSlice";
-import { logout } from "../slices/authSlice";
+import { useLogoutMutation } from "../../slices/usersApiSlice";
+import { logout } from "../../slices/authSlice";
+
+import Avatar from "../Misc/Avatar";
+import "./Header.css";
+
+import maleAvatar from "../../assets/male.png";
+import femaleAvatar from "../../assets/female.png";
 
 const Header = () => {
     const { userInfo } = useSelector(state => state.auth);
@@ -38,12 +44,27 @@ const Header = () => {
                             {userInfo ? (
                                 <>
                                     <LinkContainer to="/chats">
-                                        <Nav.Link>
+                                        <Nav.Link className="d-flex align-items-center gap-2">
                                             <FaRocketchat size={20} /> Chats
                                         </Nav.Link>
                                     </LinkContainer>
                                     <NavDropdown
-                                        title={userInfo.name}
+                                        className="d-flex align-items-center"
+                                        title={
+                                            <div className="d-flex align-items-center gap-2">
+                                                <Avatar
+                                                    name={userInfo.name}
+                                                    size="sm"
+                                                    src={
+                                                        userInfo.pic ||
+                                                        (userInfo.gender === "M"
+                                                            ? maleAvatar
+                                                            : femaleAvatar)
+                                                    }
+                                                />
+                                                {userInfo.name}
+                                            </div>
+                                        }
                                         id="username"
                                     >
                                         <LinkContainer to="/profile">
