@@ -8,6 +8,9 @@ import {
 import { setCredentials } from "../slices/authSlice";
 import { useAccessChatMutation } from "../slices/chatApiSlice";
 import { toast } from "react-toastify";
+import Avatar from "./Misc/Avatar";
+import maleAvatar from "../assets/male.png";
+import femaleAvatar from "../assets/female.png";
 
 const Users = ({ users, peopleFilter }) => {
     const { userInfo } = useSelector(state => state.auth);
@@ -127,10 +130,25 @@ const Users = ({ users, peopleFilter }) => {
 
     return (
         <div>
-            <Row className="g-4 mt-4">
+            <Row className="g-4 mt-5">
                 {filteredUsers.map(user => (
-                    <Col key={user._id} md={6} lg={4}>
-                        <Card className="h-100 shadow-sm">
+                    <Col key={user._id} md={6} lg={4} className="mb-5">
+                        <Card className="h-100 shadow-sm d-flex flex-column align-items-center">
+                            <Avatar
+                                styles={{
+                                    transform: "translateY(-40px)",
+                                    marginBottom: "-40px",
+                                    border: "2px solid #eaeaea"
+                                }}
+                                size="lg"
+                                cursor="initial"
+                                src={
+                                    user.pic ||
+                                    (user.gender === "M"
+                                        ? maleAvatar
+                                        : femaleAvatar)
+                                }
+                            />
                             <Card.Body className="d-flex flex-column text-center">
                                 <Card.Title className="mb-3">
                                     {user.name}
