@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 
 import animationGIF from "../../assets/Animation.gif";
 
-const BACKEND_ENDPOINT = "http://localhost:8000";
+const BACKEND_ENDPOINT = import.meta.env.VITE_APP_BACKEND_URL;
 
 let socket = null,
     selectedChatCompare = null;

@@ -76,6 +76,8 @@ cd dochub
 
     ```env
     REACT_APP_PORT=port
+    VITE_FIREBASE_API_KEY = Your firebase API Key here for Google OAuth2 Authentication
+    VITE_APP_BACKEND_URL = Your backend URL link
     ```
 
 4. Start the development server:
