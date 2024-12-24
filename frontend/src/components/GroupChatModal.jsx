@@ -121,7 +121,7 @@ const GroupChatModal = () => {
                     />
 
                     {/* selected */}
-                    <div className="w-100 d-flex flex-wrap">
+                    <div className="w-100 d-flex flex-wrap mb-3">
                         {selectedUsers.map(u => (
                             <UserBadgeItem
                                 user={u}

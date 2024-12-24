@@ -168,7 +168,7 @@ const Users = ({ users, peopleFilter }) => {
                                     </Card.Subtitle>
                                 )}
                                 <Card.Text className="text-muted">
-                                    <small>ID: {user._id}</small>
+                                    <small>Email : {user.email}</small>
                                 </Card.Text>
                                 <div className="mt-auto">
                                     <RenderButton user={user} />

@@ -24,7 +24,6 @@ let socket = null,
     selectedChatCompare = null;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-    console.log("URL", BACKEND_ENDPOINT);
     const { userInfo, chatInfo } = useSelector(state => state.auth); // {chats, selectedChat}
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
