@@ -45,6 +45,7 @@ const Hero = () => {
                     <Tab eventKey="all" title="All"></Tab>
                     <Tab eventKey="requests" title="Requests"></Tab>
                     <Tab eventKey="friends" title="My Friends"></Tab>
+                    <Tab eventKey="search" title="Search"></Tab>
                 </Tabs>
                 <Users
                     peopleFilter={peopleFilter}
