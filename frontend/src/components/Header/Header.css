@@ -3,3 +3,7 @@
     align-items: center;
     gap: 0.2em;
 }
+
+.drive-icon path {
+    fill: rgba(255, 255, 255, 0.55);
+}

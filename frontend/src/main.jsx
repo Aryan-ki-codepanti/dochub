@@ -17,6 +17,7 @@ import RegisterScreen from "./screens/RegisterScreen.jsx";
 import ProfileScreen from "./screens/ProfileScreen.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import ChatPage from "./screens/ChatPage.jsx";
+import DrivePage from "./screens/DrivePage.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -27,6 +28,7 @@ const router = createBrowserRouter(
             <Route path="" element={<PrivateRoute />}>
                 <Route path="/profile" element={<ProfileScreen />} />
                 <Route path="/chats" element={<ChatPage />} />
+                <Route path="/drive" element={<DrivePage />} />
             </Route>
         </Route>
     )

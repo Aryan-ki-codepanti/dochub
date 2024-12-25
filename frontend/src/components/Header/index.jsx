@@ -1,6 +1,8 @@
 // import { Navbar, Nav, Container, NavDropdown, Badge } from 'react-bootstrap';
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 import { FaSignInAlt, FaSignOutAlt, FaRocketchat } from "react-icons/fa";
+import { GrStorage } from "react-icons/gr";
+
 import { LinkContainer } from "react-router-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -43,6 +45,15 @@ const Header = () => {
                         <Nav className="ms-auto">
                             {userInfo ? (
                                 <>
+                                    <LinkContainer to="/drive">
+                                        <Nav.Link className="d-flex align-items-center gap-2">
+                                            <GrStorage
+                                                className="drive-icon"
+                                                size={20}
+                                            />
+                                            Drive
+                                        </Nav.Link>
+                                    </LinkContainer>
                                     <LinkContainer to="/chats">
                                         <Nav.Link className="d-flex align-items-center gap-2">
                                             <FaRocketchat size={20} /> Chats
