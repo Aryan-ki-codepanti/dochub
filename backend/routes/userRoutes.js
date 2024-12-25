@@ -5,13 +5,16 @@ import {
     logoutUser,
     getUserProfile,
     updateUserProfile,
-    googleAuthUser
+    googleAuthUser,
+    searchUsers
 } from "../controllers/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 router.post("/", registerUser);
+router.get("/", searchUsers);
+
 router.post("/auth", authUser);
 router.post("/auth/google", googleAuthUser);
 router.post("/logout", logoutUser);

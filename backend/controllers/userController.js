@@ -152,11 +152,31 @@ const googleAuthUser = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    get all friends and other people
+// @route   GET /api/users?search=
+// @access  Private
+const searchUsers = asyncHandler(async (req, res) => {
+    const keyword = req.query.search
+        ? {
+              $or: [
+                  { name: { $regex: req.query.search, $options: "i" } },
+                  { email: { $regex: req.query.search, $options: "i" } }
+              ]
+          }
+        : {};
+
+    const users = await User.find(keyword)
+        .find({ _id: { $ne: req.user._id } })
+        .select("-password");
+    res.status(200).json(users);
+});
+
 export {
     authUser,
     registerUser,
     logoutUser,
     getUserProfile,
     updateUserProfile,
-    googleAuthUser
+    googleAuthUser,
+    searchUsers
 };
