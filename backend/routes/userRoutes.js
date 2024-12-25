@@ -13,8 +13,8 @@ import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/", registerUser);
-router.get("/", searchUsers);
 
+router.route("/").get(protect, searchUsers);
 router.post("/auth", authUser);
 router.post("/auth/google", googleAuthUser);
 router.post("/logout", logoutUser);
