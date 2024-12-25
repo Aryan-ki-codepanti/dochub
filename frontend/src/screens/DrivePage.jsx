@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { Col, Container, Nav, Row, Tab } from "react-bootstrap";
 import { FaFile, FaShareAlt, FaUpload } from "react-icons/fa";
+import FileUploader from "../components/FileUploader";
 
 const DrivePage = () => {
     const [activeTab, setActiveTab] = useState("my-files");
 
     return (
-        <div className="text-dark" style={{ minHeight: "100vh" }}>
+        <div
+            className="text-dark"
+            style={{ minHeight: "100vh", fontFamily: "Work Sans" }}
+        >
             <Container className="pt-5">
                 <Tab.Container
                     id="drive-tabs"
@@ -17,7 +21,7 @@ const DrivePage = () => {
                         <Col
                             sm={3}
                             className="p-3  rounded-2"
-                            style={{ background: "#e8e8e8" }}
+                            style={{ background: "#e8e8e8", minHeight: "90vh" }}
                         >
                             <Nav
                                 variant="pills"
@@ -68,22 +72,34 @@ const DrivePage = () => {
 
                         <Col sm={9}>
                             <Tab.Content>
-                                <Tab.Pane eventKey="my-files">
-                                    <h4>My Files</h4>
+                                <Tab.Pane
+                                    eventKey="my-files"
+                                    className="text-center py-4"
+                                >
+                                    <h2>My Files</h2>
                                     <p>
                                         Your personal files will be displayed
                                         here.
                                     </p>
                                 </Tab.Pane>
-                                <Tab.Pane eventKey="shared-files">
+                                <Tab.Pane
+                                    eventKey="shared-files"
+                                    className="text-center py-4"
+                                >
                                     <h4>Shared Files</h4>
                                     <p>
                                         Files shared with you will appear here.
                                     </p>
                                 </Tab.Pane>
-                                <Tab.Pane eventKey="upload-file">
-                                    <h4>Upload File</h4>
+                                <Tab.Pane
+                                    eventKey="upload-file"
+                                    className="text-center py-4"
+                                >
+                                    <h2>Upload File</h2>
+                                    <hr className="border-secondary" />
+
                                     <p>You can upload your files here.</p>
+                                    <FileUploader />
                                 </Tab.Pane>
                             </Tab.Content>
                         </Col>

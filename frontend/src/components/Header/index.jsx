@@ -46,11 +46,8 @@ const Header = () => {
                             {userInfo ? (
                                 <>
                                     <LinkContainer to="/drive">
-                                        <Nav.Link className="d-flex align-items-center gap-2">
-                                            <GrStorage
-                                                className="drive-icon"
-                                                size={20}
-                                            />
+                                        <Nav.Link className="d-flex align-items-center gap-2 drive-icon">
+                                            <GrStorage size={20} />
                                             Drive
                                         </Nav.Link>
                                     </LinkContainer>
