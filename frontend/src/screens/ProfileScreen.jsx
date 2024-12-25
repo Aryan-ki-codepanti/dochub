@@ -72,7 +72,6 @@ const ProfileScreen = () => {
                     dob: new Date(dob),
                     gender
                 }).unwrap();
-                console.log("UPDATED : ", res);
                 dispatch(setCredentials(res));
                 toast.success("Profile updated successfully");
             } catch (err) {

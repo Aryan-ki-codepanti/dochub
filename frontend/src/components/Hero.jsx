@@ -24,8 +24,8 @@ const Hero = () => {
         // fetch people
         const fetchPeople = async () => {
             try {
-                const data = await getAllPeople().unwrap();
-                dispatch(setCredentials({ ...userInfo, people: data.people }));
+                const { people, friends } = await getAllPeople().unwrap();
+                dispatch(setCredentials({ ...userInfo, people, friends }));
             } catch (error) {
                 console.log("FETCH PEOPLE", error);
             }

@@ -59,7 +59,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             const fetchedMsgs = await allMessages(
                 chatInfo.selectedChat._id
             ).unwrap();
-            console.log("fetched msgs", fetchedMsgs);
             if (!fetchedMsgs) setMessages(prev => []);
             else setMessages(prev => fetchedMsgs);
 
@@ -82,7 +81,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     chatId: chatInfo.selectedChat._id,
                     content: newMessage
                 }).unwrap();
-                console.log("new sent message ", sentMessage);
                 // socket io
                 socket.emit("new message", sentMessage);
 

@@ -30,7 +30,6 @@ const Users = ({ users, peopleFilter }) => {
     const dispatch = useDispatch();
 
     const doAction = async (e, user, action) => {
-        console.log(user);
         try {
             // action 0 , 1, 2, 3,4
             // cancel(0) / send(1) /accept(2)/reject(3) / unfriend(4)
@@ -44,7 +43,6 @@ const Users = ({ users, peopleFilter }) => {
                 const chatData = await accessChat({
                     userId: user._id
                 }).unwrap();
-                console.log("CHAT data", chatData);
                 if (user.name)
                     toast.info(`You and ${user.name} are now friends 😎`);
                 else toast.info(`You got a new friend`);
@@ -54,14 +52,12 @@ const Users = ({ users, peopleFilter }) => {
                 dispatch(setCredentials({ ...userInfo, people: data.people }));
             }
         } catch (error) {
-            console.log("ERROR in DO ACTION");
+            console.log("ERROR in DO ACTION", error);
         }
     };
 
     const RenderButton2 = ({ user }) => {
         let isFriend = userInfo.friends.find(x => x.user === user._id);
-        // console.log("R2", user._id, isFriend);
-        console.log(userInfo);
         let stats = null;
         if (isFriend) stats = isFriend.status;
 
@@ -190,7 +186,6 @@ const Users = ({ users, peopleFilter }) => {
         try {
             const data = await searchUsersApi(query).unwrap();
             setSearchResults(prev => data);
-            console.log("SEARCH PPL", data);
         } catch (error) {
             toast.error("Couldn't fetch results");
             console.log("ERROR in searching users");
@@ -208,8 +203,6 @@ const Users = ({ users, peopleFilter }) => {
             setFilteredUsers(prev => users.filter(x => x?.status === 3));
         // all
         else setFilteredUsers(prev => users);
-
-        console.log("filter", peopleFilter);
     }, [peopleFilter, setFilteredUsers, users]);
 
     return (

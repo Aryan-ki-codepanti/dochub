@@ -69,7 +69,7 @@ const getAllPeople = asyncHandler(async (req, res) => {
 
         ans.push(...moreUsers);
         ans = ans.filter(x => x._id.toString() != req.user._id.toString());
-        res.json({ people: ans });
+        res.json({ people: ans, friends });
     } catch (error) {
         res.status(300);
         console.log("GETALL PEOPLE ERROR", error);

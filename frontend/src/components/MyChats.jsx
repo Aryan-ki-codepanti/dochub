@@ -31,7 +31,6 @@ const MyChats = ({ fetchAgain }) => {
         fetchAllChats();
     }, [fetchAgain]);
 
-    console.log("all", chatInfo);
     return (
         <div
             className="MyChatsBox bg-light"
