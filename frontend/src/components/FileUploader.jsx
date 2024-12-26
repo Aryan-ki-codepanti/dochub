@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Button, Container } from "react-bootstrap";
+import { Button, Container, ProgressBar } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { FaFileUpload, FaFilePdf } from "react-icons/fa";
-// import { FaFilePdf } from "react-icons/fa6";
+import { useUploadFilesMutation } from "../slices/filesApiSlice";
 
 const FileUploader = () => {
     const [files, setFiles] = useState([]);
     const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [uploadFilesApi] = useUploadFilesMutation();
 
     const onDrop = acceptedFiles => {
-        // console.log(acceptedFiles);
         const acc = acceptedFiles.map(f => {
             f["preview"] = URL.createObjectURL(f);
             return f;
         });
-        console.log("ACC", acc);
-        setFiles(prevFiles => [...prevFiles, ...acceptedFiles]);
+        setFiles(prevFiles => [...prevFiles, ...acc]);
     };
 
     const onDropRejected = fileRejections => {
@@ -52,15 +52,17 @@ const FileUploader = () => {
             setUploading(true);
 
             // API REQUEST
-            // const response = await axios.post(
-            //     "http://your-backend-endpoint/upload",
-            //     formData,
-            //     {
-            //         headers: {
-            //             "Content-Type": "multipart/form-data"
-            //         }
-            //     }
-            // );
+            const resp = await uploadFilesApi({
+                formData,
+                onUploadProgress: progressEvent =>
+                    setUploadProgress(prev =>
+                        Math.round(
+                            (progressEvent.loaded * 100) / progressEvent.total
+                        )
+                    )
+            }).unwrap();
+
+            console.log("FILE UPLOAD RESP", resp);
 
             toast.success("Files uploaded successfully!");
             // console.log(response.data);
@@ -117,11 +119,13 @@ const FileUploader = () => {
                         {files.map((file, index) => (
                             <li className="mb-3" key={index}>
                                 {file.type === "application/pdf" ? (
-                                    <FaFilePdf size={30} />
+                                    <FaFilePdf className="me-2" size={30} />
                                 ) : (
                                     <img
                                         src={file["preview"]}
                                         width={30}
+                                        style={{ objectFit: "cover" }}
+                                        className="me-2"
                                         alt={file.name}
                                     />
                                 )}
@@ -129,6 +133,14 @@ const FileUploader = () => {
                             </li>
                         ))}
                     </ul>
+                    {uploadProgress > 0 && (
+                        <ProgressBar
+                            className="w-25 my-3"
+                            now={uploadProgress}
+                            label={`${uploadProgress}%`}
+                        />
+                    )}
+
                     <Button
                         onClick={handleUpload}
                         variant="success"
