@@ -9,6 +9,7 @@ import userRoutes from "./routes/userRoutes.js";
 import friendRoutes from "./routes/friendRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import fileRoutes from "./routes/fileRoutes.js";
 import { Server } from "socket.io";
 
 const port = process.env.PORT || 5000;
@@ -30,6 +31,8 @@ app.use("/api/friends", friendRoutes);
 app.use("/api/chat", chatRoutes);
 // messages
 app.use("/api/message", messageRoutes);
+// files
+app.use("/api/files", fileRoutes);
 
 if (process.env.NODE_ENV === "production") {
     const __dirname = path.resolve();
