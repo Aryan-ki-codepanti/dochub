@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Button, Container, ProgressBar } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { FaFileUpload, FaFilePdf } from "react-icons/fa";
 import { useUploadFilesMutation } from "../slices/filesApiSlice";
@@ -8,7 +8,7 @@ import { useUploadFilesMutation } from "../slices/filesApiSlice";
 const FileUploader = () => {
     const [files, setFiles] = useState([]);
     const [uploading, setUploading] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState(0);
+
     const [uploadFilesApi] = useUploadFilesMutation();
 
     const onDrop = acceptedFiles => {
@@ -53,13 +53,7 @@ const FileUploader = () => {
 
             // API REQUEST
             const resp = await uploadFilesApi({
-                formData,
-                onUploadProgress: progressEvent =>
-                    setUploadProgress(prev =>
-                        Math.round(
-                            (progressEvent.loaded * 100) / progressEvent.total
-                        )
-                    )
+                formData
             }).unwrap();
 
             console.log("FILE UPLOAD RESP", resp);
@@ -68,10 +62,10 @@ const FileUploader = () => {
             // console.log(response.data);
         } catch (error) {
             console.error("Error uploading files:", error);
-
             toast.error("Failed to upload files.");
         } finally {
             setUploading(false);
+            setFiles(prev => []);
         }
     };
 
@@ -133,13 +127,6 @@ const FileUploader = () => {
                             </li>
                         ))}
                     </ul>
-                    {uploadProgress > 0 && (
-                        <ProgressBar
-                            className="w-25 my-3"
-                            now={uploadProgress}
-                            label={`${uploadProgress}%`}
-                        />
-                    )}
 
                     <Button
                         onClick={handleUpload}

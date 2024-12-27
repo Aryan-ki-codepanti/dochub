@@ -1,10 +1,33 @@
 import React, { useState } from "react";
 import { Col, Container, Nav, Row, Tab } from "react-bootstrap";
-import { FaFile, FaShareAlt, FaUpload } from "react-icons/fa";
+import { FaRegSmile, FaFile, FaShareAlt, FaUpload } from "react-icons/fa";
+
 import FileUploader from "../components/FileUploader";
+import { useGetFilesInfoMutation } from "../slices/filesApiSlice";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 const DrivePage = () => {
     const [activeTab, setActiveTab] = useState("my-files");
+
+    // my files
+    const [myFilesInfo, setMyFilesInfo] = useState([]);
+    const [getFilesInfoAPI] = useGetFilesInfoMutation();
+
+    const fetchMyFiles = async () => {
+        try {
+            const data = await getFilesInfoAPI().unwrap();
+            console.log("my files", data);
+            setMyFilesInfo(prev => data);
+        } catch (error) {
+            console.log("fetchMyFiles error", error);
+            toast.error("Unable to fetch your files");
+        }
+    };
+
+    useEffect(() => {
+        fetchMyFiles();
+    }, []);
 
     return (
         <div
@@ -75,12 +98,26 @@ const DrivePage = () => {
                                 <Tab.Pane
                                     eventKey="my-files"
                                     className="text-center py-4"
+                                    style={
+                                        myFilesInfo.length > 1
+                                            ? {}
+                                            : {
+                                                  //   minHeight: "90vh",
+                                                  background: "#e8e8e8"
+                                              }
+                                    }
                                 >
-                                    <h2>My Files</h2>
-                                    <p>
-                                        Your personal files will be displayed
-                                        here.
-                                    </p>
+                                    {myFilesInfo.length > 0 ? (
+                                        <p className="mt-4 fs-3 mb-0 d-flex align-items-center justify-content-center gap-3">
+                                            Your personal files will be
+                                            displayed here.{" "}
+                                            <FaRegSmile size={30} />
+                                        </p>
+                                    ) : (
+                                        <>
+                                            <h1>myFiles</h1>
+                                        </>
+                                    )}
                                 </Tab.Pane>
                                 <Tab.Pane
                                     eventKey="shared-files"
