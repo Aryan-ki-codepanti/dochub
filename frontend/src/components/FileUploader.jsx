@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { FaFileUpload, FaFilePdf } from "react-icons/fa";
 import { useUploadFilesMutation } from "../slices/filesApiSlice";
 
-const FileUploader = () => {
+const FileUploader = ({ setMyFilesInfo }) => {
     const [files, setFiles] = useState([]);
     const [uploading, setUploading] = useState(false);
 
@@ -59,6 +59,7 @@ const FileUploader = () => {
             console.log("FILE UPLOAD RESP", resp);
 
             toast.success("Files uploaded successfully!");
+            setMyFilesInfo(prev => [...resp, ...prev]);
             // console.log(response.data);
         } catch (error) {
             console.error("Error uploading files:", error);
@@ -113,7 +114,11 @@ const FileUploader = () => {
                         {files.map((file, index) => (
                             <li className="mb-3" key={index}>
                                 {file.type === "application/pdf" ? (
-                                    <FaFilePdf className="me-2" size={30} />
+                                    <FaFilePdf
+                                        fill="#FF0000"
+                                        className="me-2"
+                                        size={30}
+                                    />
                                 ) : (
                                     <img
                                         src={file["preview"]}

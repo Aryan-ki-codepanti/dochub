@@ -6,15 +6,20 @@ import FileUploader from "../components/FileUploader";
 import { useGetFilesInfoMutation } from "../slices/filesApiSlice";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import FileInfoItem from "../components/FileInfoItem";
+import Loader from "../components/Loader";
 
 const DrivePage = () => {
     const [activeTab, setActiveTab] = useState("my-files");
 
     // my files
     const [myFilesInfo, setMyFilesInfo] = useState([]);
+    const [currentMyFileInfo, setCurrentMyFileInfo] = useState(null);
+    const [loadingFileInfo, setLoadingFileInfo] = useState(false);
     const [getFilesInfoAPI] = useGetFilesInfoMutation();
 
     const fetchMyFiles = async () => {
+        setLoadingFileInfo(true);
         try {
             const data = await getFilesInfoAPI().unwrap();
             console.log("my files", data);
@@ -22,6 +27,8 @@ const DrivePage = () => {
         } catch (error) {
             console.log("fetchMyFiles error", error);
             toast.error("Unable to fetch your files");
+        } finally {
+            setLoadingFileInfo(false);
         }
     };
 
@@ -34,7 +41,7 @@ const DrivePage = () => {
             className="text-dark"
             style={{ minHeight: "100vh", fontFamily: "Work Sans" }}
         >
-            <Container className="pt-5">
+            <Container className="pt-2">
                 <Tab.Container
                     id="drive-tabs"
                     activeKey={activeTab}
@@ -44,7 +51,7 @@ const DrivePage = () => {
                         <Col
                             sm={3}
                             className="p-3  rounded-2"
-                            style={{ background: "#e8e8e8", minHeight: "90vh" }}
+                            style={{ background: "#e8e8e8", minHeight: "88vh" }}
                         >
                             <Nav
                                 variant="pills"
@@ -97,26 +104,55 @@ const DrivePage = () => {
                             <Tab.Content>
                                 <Tab.Pane
                                     eventKey="my-files"
-                                    className="text-center py-4"
-                                    style={
-                                        myFilesInfo.length > 1
-                                            ? {}
-                                            : {
-                                                  //   minHeight: "90vh",
-                                                  background: "#e8e8e8"
-                                              }
-                                    }
+                                    className="text-center py-4 rounded-2"
                                 >
+                                    {loadingFileInfo && <Loader />}
                                     {myFilesInfo.length > 0 ? (
-                                        <p className="mt-4 fs-3 mb-0 d-flex align-items-center justify-content-center gap-3">
-                                            Your personal files will be
-                                            displayed here.{" "}
-                                            <FaRegSmile size={30} />
-                                        </p>
+                                        <div>
+                                            <h2>My Files</h2>
+                                            <div className="fs-5 fw-semibold px-4 py-3 d-flex align-items-center justify-content-end gap-3">
+                                                <div
+                                                    style={{
+                                                        marginRight: "auto"
+                                                    }}
+                                                >
+                                                    <span>Filename</span>
+                                                </div>
+                                                <div className="d-flex gap-4 ">
+                                                    <span>Size</span>
+                                                    <span>Last Modified</span>
+                                                </div>
+                                            </div>
+                                            <div className="d-flex flex-column gap-2">
+                                                {myFilesInfo.map(f => (
+                                                    <FileInfoItem
+                                                        key={f._id}
+                                                        file={f}
+                                                        currentMyFileInfo={
+                                                            currentMyFileInfo
+                                                        }
+                                                        onMouseEnter={e =>
+                                                            setCurrentMyFileInfo(
+                                                                prev => f
+                                                            )
+                                                        }
+                                                        onMouseLeave={e =>
+                                                            setCurrentMyFileInfo(
+                                                                prev => null
+                                                            )
+                                                        }
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
                                     ) : (
-                                        <>
-                                            <h1>myFiles</h1>
-                                        </>
+                                        <div>
+                                            <p className="mt-4 fw-semibold fs-3 mb-0 d-flex align-items-center justify-content-center gap-3">
+                                                Your personal files <br /> will
+                                                be displayed here.{" "}
+                                                <FaRegSmile size={60} />
+                                            </p>
+                                        </div>
                                     )}
                                 </Tab.Pane>
                                 <Tab.Pane
@@ -136,7 +172,9 @@ const DrivePage = () => {
                                     <hr className="border-secondary" />
 
                                     <p>You can upload your files here.</p>
-                                    <FileUploader />
+                                    <FileUploader
+                                        setMyFilesInfo={setMyFilesInfo}
+                                    />
                                 </Tab.Pane>
                             </Tab.Content>
                         </Col>
