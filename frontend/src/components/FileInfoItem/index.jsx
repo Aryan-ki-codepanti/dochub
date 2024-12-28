@@ -15,7 +15,8 @@ const FileInfoItem = ({
     onMouseEnter,
     currentMyFileInfo,
     onMouseLeave,
-    handleDownload
+    handleDownload,
+    handleView
 }) => {
     const imgRegex = /^image\/.+$/;
     function formatDate(date) {
@@ -43,7 +44,11 @@ const FileInfoItem = ({
             </div>
             {currentMyFileInfo === file && (
                 <div className="d-flex align-items-center gap-2 gap-md-3 mx-3">
-                    <FaBookReader cursor="pointer" size={20} />
+                    <FaBookReader
+                        onClick={e => handleView(file)}
+                        cursor="pointer"
+                        size={20}
+                    />
                     <IoDownload
                         onClick={e => handleDownload(file)}
                         cursor="pointer"

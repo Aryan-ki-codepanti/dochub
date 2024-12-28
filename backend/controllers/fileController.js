@@ -2,10 +2,10 @@ import asyncHandler from "express-async-handler";
 import { filesize } from "filesize";
 import FileModel from "../models/fileModel.js";
 import fs from "fs";
-
 import path from "path";
 import { fileURLToPath } from "url";
 
+import mime from "mime";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -101,7 +101,10 @@ const viewFile = asyncHandler(async (req, res) => {
         return res.status(404).json({ message: "File not found." });
     }
 
-    res.setHeader("Content-Type", "application/octet-stream");
+    res.setHeader(
+        "Content-Type",
+        mime.getType(filePath) || "application/octet-stream"
+    );
     res.setHeader(
         "Content-Disposition",
         `inline; filename=${fileInfo.filename}`

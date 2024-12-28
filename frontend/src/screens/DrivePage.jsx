@@ -5,7 +5,8 @@ import { FaRegSmile, FaFile, FaShareAlt, FaUpload } from "react-icons/fa";
 import FileUploader from "../components/FileUploader";
 import {
     useDownloadFileMutation,
-    useGetFilesInfoMutation
+    useGetFilesInfoMutation,
+    useViewFileMutation
 } from "../slices/filesApiSlice";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
@@ -22,6 +23,8 @@ const DrivePage = () => {
     const [getFilesInfoAPI] = useGetFilesInfoMutation();
     const [downloadFileAPI] = useDownloadFileMutation();
 
+    const [viewFileAPI] = useViewFileMutation();
+
     const handleDownload = async fileInfo => {
         try {
             const fileBlob = await downloadFileAPI({
@@ -37,6 +40,16 @@ const DrivePage = () => {
         } catch (error) {
             console.error("Error downloading file:", error);
             toast.error("Error downloading file");
+        }
+    };
+    const handleView = async fileInfo => {
+        try {
+            const fileBlob = await viewFileAPI({ fileInfo }).unwrap();
+            const url = window.URL.createObjectURL(fileBlob);
+            window.open(url, "_blank");
+        } catch (error) {
+            console.log("Error in viewing file", error);
+            toast.error("Error in viewing file");
         }
     };
 
@@ -166,6 +179,7 @@ const DrivePage = () => {
                                                         handleDownload={
                                                             handleDownload
                                                         }
+                                                        handleView={handleView}
                                                     />
                                                 ))}
                                             </div>

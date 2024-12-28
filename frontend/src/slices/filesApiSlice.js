@@ -24,7 +24,7 @@ export const filesApiSlice = apiSlice.injectEndpoints({
                 responseHandler: response => response.blob()
             })
         }),
-        viewFile: builder.query({
+        viewFile: builder.mutation({
             query: data => ({
                 url: `${FILES_URL}/view`,
                 method: "POST",
@@ -39,5 +39,5 @@ export const {
     useUploadFilesMutation,
     useGetFilesInfoMutation,
     useDownloadFileMutation,
-    useViewFileQuery
+    useViewFileMutation
 } = filesApiSlice;
