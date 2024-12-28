@@ -112,4 +112,47 @@ const viewFile = asyncHandler(async (req, res) => {
     fs.createReadStream(filePath).pipe(res);
 });
 
-export { getFilesInfo, uploadFiles, downloadFile, viewFile };
+//@description     Delete a specific file
+//@route           DELETE /api/files
+//@access          Protected
+const deleteFile = asyncHandler(async (req, res) => {
+    const { user } = req;
+    const { fileInfo } = req.body;
+
+    // if user is not owner of file
+    if (fileInfo.owner.toString() !== user._id.toString())
+        return res
+            .status(401)
+            .json({ message: "You can not access this file" });
+
+    const filePath = path.join(
+        UPLOAD_DIR,
+        user._id.toString(),
+        fileInfo.filename
+    );
+
+    // Check if the file exists
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ message: "File not found." });
+    }
+
+    // delete DB record
+    await FileModel.findByIdAndDelete(fileInfo._id);
+
+    // Delete the file
+    fs.unlink(filePath, err => {
+        if (err) {
+            console.error("Error deleting file:", err);
+            return res
+                .status(500)
+                .json({ message: "Failed to delete the file." });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "File deleted successfully."
+        });
+    });
+});
+
+export { getFilesInfo, uploadFiles, downloadFile, viewFile, deleteFile };

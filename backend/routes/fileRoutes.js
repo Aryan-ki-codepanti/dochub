@@ -3,6 +3,7 @@ import { protect } from "../middleware/authMiddleware.js";
 
 import upload from "../config/multerConfigure.js";
 import {
+    deleteFile,
     downloadFile,
     getFilesInfo,
     uploadFiles,
@@ -15,5 +16,6 @@ router.get("/", protect, getFilesInfo);
 router.post("/upload", protect, upload.array("files", 5), uploadFiles);
 router.post("/download", protect, downloadFile);
 router.post("/view", protect, viewFile);
+router.post("/delete", protect, deleteFile);
 
 export default router;
