@@ -3,7 +3,10 @@ import { Col, Container, Nav, Row, Tab } from "react-bootstrap";
 import { FaRegSmile, FaFile, FaShareAlt, FaUpload } from "react-icons/fa";
 
 import FileUploader from "../components/FileUploader";
-import { useGetFilesInfoMutation } from "../slices/filesApiSlice";
+import {
+    useDownloadFileMutation,
+    useGetFilesInfoMutation
+} from "../slices/filesApiSlice";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import FileInfoItem from "../components/FileInfoItem";
@@ -17,6 +20,25 @@ const DrivePage = () => {
     const [currentMyFileInfo, setCurrentMyFileInfo] = useState(null);
     const [loadingFileInfo, setLoadingFileInfo] = useState(false);
     const [getFilesInfoAPI] = useGetFilesInfoMutation();
+    const [downloadFileAPI] = useDownloadFileMutation();
+
+    const handleDownload = async fileInfo => {
+        try {
+            const fileBlob = await downloadFileAPI({
+                fileInfo
+            }).unwrap();
+            const url = window.URL.createObjectURL(fileBlob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", fileInfo.filename);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+        } catch (error) {
+            console.error("Error downloading file:", error);
+            toast.error("Error downloading file");
+        }
+    };
 
     const fetchMyFiles = async () => {
         setLoadingFileInfo(true);
@@ -140,6 +162,9 @@ const DrivePage = () => {
                                                             setCurrentMyFileInfo(
                                                                 prev => null
                                                             )
+                                                        }
+                                                        handleDownload={
+                                                            handleDownload
                                                         }
                                                     />
                                                 ))}

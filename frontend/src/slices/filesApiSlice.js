@@ -15,9 +15,29 @@ export const filesApiSlice = apiSlice.injectEndpoints({
                 url: `${FILES_URL}`,
                 method: "GET"
             })
+        }),
+        downloadFile: builder.mutation({
+            query: data => ({
+                url: `${FILES_URL}/download`,
+                method: "POST",
+                body: data,
+                responseHandler: response => response.blob()
+            })
+        }),
+        viewFile: builder.query({
+            query: data => ({
+                url: `${FILES_URL}/view`,
+                method: "POST",
+                body: data,
+                responseHandler: response => response.blob()
+            })
         })
     })
 });
 
-export const { useUploadFilesMutation, useGetFilesInfoMutation } =
-    filesApiSlice;
+export const {
+    useUploadFilesMutation,
+    useGetFilesInfoMutation,
+    useDownloadFileMutation,
+    useViewFileQuery
+} = filesApiSlice;
