@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import FileInfoItem from "../components/FileInfoItem";
 import Loader from "../components/Loader";
+import { useFetchChatsMutation } from "../slices/chatApiSlice";
 
 const DrivePage = () => {
     const [activeTab, setActiveTab] = useState("my-files");
@@ -25,6 +26,11 @@ const DrivePage = () => {
     const [downloadFileAPI] = useDownloadFileMutation();
     const [deleteFileAPI] = useDeleteFileMutation();
     const [viewFileAPI] = useViewFileMutation();
+    const [fetchChatsAPI] = useFetchChatsMutation();
+
+    // group directory for upload and shared files
+    const [allGroups, setAllGroups] = useState([]);
+    const [sharedFilesInfo, setSharedFilesInfo] = useState([]);
 
     const handleDownload = async fileInfo => {
         try {
@@ -81,8 +87,30 @@ const DrivePage = () => {
         }
     };
 
+    const fetchGroupDirs = async () => {
+        try {
+            let allChats = await fetchChatsAPI().unwrap();
+            allChats = allChats
+                .filter(x => x.isGroupChat)
+                .map(chat => ({ groupId: chat._id, chatName: chat.chatName }));
+
+            setAllGroups(prev => allChats);
+            // get all shared files
+            let grpFiles = [];
+            for (let grp of allChats) {
+                let tmp = await getFilesInfoAPI(grp.groupId).unwrap();
+                grpFiles = [...grpFiles, ...tmp];
+            }
+            setSharedFilesInfo(prev => grpFiles);
+        } catch (error) {
+            toast.error("Error in fetching Group Directories");
+            console.log("Error in fetchGroupDirs", error);
+        }
+    };
+
     useEffect(() => {
         fetchMyFiles();
+        fetchGroupDirs();
     }, []);
 
     return (
@@ -229,7 +257,9 @@ const DrivePage = () => {
 
                                     <p>You can upload your files here.</p>
                                     <FileUploader
-                                        setMyFilesInfo={setMyFilesInfo}
+                                        allGroups={allGroups}
+                                        fetchMyFiles={fetchMyFiles}
+                                        fetchGroupDirs={fetchGroupDirs}
                                     />
                                 </Tab.Pane>
                             </Tab.Content>

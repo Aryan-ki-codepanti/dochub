@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Button, Container } from "react-bootstrap";
+import { Button, Container, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { FaFileUpload, FaFilePdf } from "react-icons/fa";
 import { useUploadFilesMutation } from "../slices/filesApiSlice";
 
-const FileUploader = ({ setMyFilesInfo }) => {
+const FileUploader = ({ allGroups, fetchMyFiles, fetchGroupDirs }) => {
     const [files, setFiles] = useState([]);
     const [uploading, setUploading] = useState(false);
 
     const [uploadFilesApi] = useUploadFilesMutation();
+
+    // save location
+    const [saveDirectory, setSaveDirectory] = useState("my");
 
     const onDrop = acceptedFiles => {
         const acc = acceptedFiles.map(f => {
@@ -51,16 +54,23 @@ const FileUploader = ({ setMyFilesInfo }) => {
         try {
             setUploading(true);
 
+            const input =
+                saveDirectory === "my"
+                    ? { formData }
+                    : { formData, groupId: saveDirectory };
             // API REQUEST
-            const resp = await uploadFilesApi({
-                formData
-            }).unwrap();
+            const resp = await uploadFilesApi(input).unwrap();
 
             console.log("FILE UPLOAD RESP", resp);
 
             toast.success("Files uploaded successfully!");
-            setMyFilesInfo(prev => [...resp, ...prev]);
-            // console.log(response.data);
+
+            // refetch
+            fetchMyFiles();
+            fetchGroupDirs();
+
+            // if (!input.groupId) setMyFilesInfo(prev => [...resp, ...prev]);
+            // else setSharedFilesInfo(prev => [...resp, ...prev]);
         } catch (error) {
             console.error("Error uploading files:", error);
             toast.error("Failed to upload files.");
@@ -69,7 +79,6 @@ const FileUploader = ({ setMyFilesInfo }) => {
             setFiles(prev => []);
         }
     };
-
     return (
         <Container className="py-5">
             <div
@@ -109,6 +118,22 @@ const FileUploader = ({ setMyFilesInfo }) => {
 
             {files.length > 0 && (
                 <div className="mt-5 d-flex flex-column align-items-start">
+                    <h4>Select Save Location</h4>
+                    <Form.Select
+                        value={saveDirectory}
+                        aria-label="save location"
+                        onChange={e => setSaveDirectory(prev => e.target.value)}
+                    >
+                        <option value="my">My Files</option>
+                        {allGroups?.map(grp => (
+                            <option key={grp.groupId} value={grp.groupId}>
+                                {grp.chatName} (Shared)
+                            </option>
+                        ))}
+                    </Form.Select>
+
+                    <hr className="border-secondary w-100" />
+
                     <h4>Selected Files:</h4>
                     <ul className="d-flex flex-column align-items-start">
                         {files.map((file, index) => (

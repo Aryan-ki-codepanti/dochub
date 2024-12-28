@@ -4,15 +4,17 @@ const FILES_URL = "/api/files";
 export const filesApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         uploadFiles: builder.mutation({
-            query: ({ formData }) => ({
-                url: `${FILES_URL}/upload`,
+            query: ({ formData, groupId }) => ({
+                url: groupId
+                    ? `${FILES_URL}/upload/${groupId}`
+                    : `${FILES_URL}/upload`,
                 method: "POST",
                 body: formData
             })
         }),
         getFilesInfo: builder.mutation({
-            query: () => ({
-                url: `${FILES_URL}`,
+            query: groupId => ({
+                url: groupId ? `${FILES_URL}/${groupId}` : `${FILES_URL}`,
                 method: "GET"
             })
         }),
