@@ -4,6 +4,7 @@ import { FaRegSmile, FaFile, FaShareAlt, FaUpload } from "react-icons/fa";
 
 import FileUploader from "../components/FileUploader";
 import {
+    useDeleteFileMutation,
     useDownloadFileMutation,
     useGetFilesInfoMutation,
     useViewFileMutation
@@ -22,7 +23,7 @@ const DrivePage = () => {
     const [loadingFileInfo, setLoadingFileInfo] = useState(false);
     const [getFilesInfoAPI] = useGetFilesInfoMutation();
     const [downloadFileAPI] = useDownloadFileMutation();
-
+    const [deleteFileAPI] = useDeleteFileMutation();
     const [viewFileAPI] = useViewFileMutation();
 
     const handleDownload = async fileInfo => {
@@ -50,6 +51,20 @@ const DrivePage = () => {
         } catch (error) {
             console.log("Error in viewing file", error);
             toast.error("Error in viewing file");
+        }
+    };
+
+    const handleDelete = async fileInfo => {
+        try {
+            const data = await deleteFileAPI({ fileInfo }).unwrap();
+
+            if (!data.success) throw new Error("Error in deleting file");
+
+            setMyFilesInfo(prev => prev.filter(f => f._id !== fileInfo._id));
+            toast.success("File Deleted successfully ");
+        } catch (error) {
+            toast.error("Error in deleting file");
+            console.log("Error in deleting file", error);
         }
     };
 
@@ -180,6 +195,9 @@ const DrivePage = () => {
                                                             handleDownload
                                                         }
                                                         handleView={handleView}
+                                                        handleDelete={
+                                                            handleDelete
+                                                        }
                                                     />
                                                 ))}
                                             </div>

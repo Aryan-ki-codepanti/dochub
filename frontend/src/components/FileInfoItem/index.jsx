@@ -16,7 +16,8 @@ const FileInfoItem = ({
     currentMyFileInfo,
     onMouseLeave,
     handleDownload,
-    handleView
+    handleView,
+    handleDelete
 }) => {
     const imgRegex = /^image\/.+$/;
     function formatDate(date) {
@@ -55,6 +56,7 @@ const FileInfoItem = ({
                         size={20}
                     />
                     <img
+                        onClick={e => handleDelete(file)}
                         width={20}
                         style={{ cursor: "pointer" }}
                         src={binSVG}
