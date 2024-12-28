@@ -6,25 +6,76 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import mime from "mime";
+import Chat from "../models/chatModel.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const UPLOAD_DIR = path.join(__dirname, "../uploads");
 
-//@description     GET files from /uploads/userId  directory
-//@route           GET /api/files/
+//@description     GET files from /uploads/userId  directory or  group directory if provided
+//@route           GET /api/files/<optional :groupId>
 //@access          Protected
 const getFilesInfo = asyncHandler(async (req, res) => {
-    const data = await FileModel.find({ owner: req.user._id }).sort({
+    // handle group files
+    if (req.params.groupId) {
+        const group = await Chat.find({
+            _id: req.params.groupId,
+            users: { $elemMatch: { $eq: req.user._id } }
+        });
+
+        if (!group)
+            res.status(401).json({
+                message: "You can not access this group files"
+            });
+
+        const data = await FileModel.find({ groupId: req.params.groupId })
+            .sort({
+                updatedAt: -1
+            })
+            .populate("groupId", "_id chatName");
+        res.status(200).json(data);
+        return;
+    }
+
+    // USER my FILEs
+    const data = await FileModel.find({
+        isShared: false,
+        owner: req.user._id
+    }).sort({
         updatedAt: -1
     });
     res.status(200).json(data);
 });
 
-//@description     Upload 1 to 5 files to /uploads/userId  directory
-//@route           POST /api/files/upload
+//@description     Upload 1 to 5 files to /uploads/userId  directory or /uploads/groupId
+//@route           POST /api/files/upload/<optional :groupId>
 //@access          Protected
 const uploadFiles = asyncHandler(async (req, res) => {
+    if (req.params.groupId) {
+        let fileData = [];
+        for (let file of req.files) {
+            let path = `uploads/${req.params.groupId}/${file.filename}`;
+            let fileObj = {
+                filename: file.filename,
+                size: file.size,
+                sizeReadable: filesize(file.size),
+                path,
+                mimetype: file.mimetype,
+                owner: req.user._id,
+                groupId: req.params.groupId,
+                isShared: true
+            };
+
+            let savedF = await FileModel.findOneAndUpdate({ path }, fileObj, {
+                new: true,
+                upsert: true
+            }).populate("owner", "-password");
+            fileData.push(savedF);
+        }
+        res.status(201).json(fileData);
+        return;
+    }
+
     let fileData = [];
     for (let file of req.files) {
         let path = `uploads/${req.user._id}/${file.filename}`;
@@ -43,7 +94,7 @@ const uploadFiles = asyncHandler(async (req, res) => {
         }).populate("owner", "-password");
         fileData.push(savedF);
     }
-    res.json(fileData);
+    res.status(201).json(fileData);
 });
 
 //@description     Download a specific file

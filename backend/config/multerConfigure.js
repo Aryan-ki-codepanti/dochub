@@ -9,11 +9,13 @@ const __dirname = path.dirname(__filename);
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const userId = req.user._id;
+        // handle group upload
+        let directory = req.params.groupId || req.user._id;
+
         const uploadPath = path.join(
             __dirname,
             "../uploads",
-            userId.toString()
+            directory.toString()
         );
 
         // Ensure the directory exists

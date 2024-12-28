@@ -13,7 +13,9 @@ import {
 const router = express.Router();
 
 router.get("/", protect, getFilesInfo);
+router.get("/:groupId", protect, getFilesInfo);
 router.post("/upload", protect, upload.array("files", 5), uploadFiles);
+router.post("/upload/:groupId", protect, upload.array("files", 5), uploadFiles);
 router.post("/download", protect, downloadFile);
 router.post("/view", protect, viewFile);
 router.post("/delete", protect, deleteFile);
