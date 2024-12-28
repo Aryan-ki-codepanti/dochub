@@ -72,7 +72,6 @@ const DrivePage = () => {
         setLoadingFileInfo(true);
         try {
             const data = await getFilesInfoAPI().unwrap();
-            console.log("my files", data);
             setMyFilesInfo(prev => data);
         } catch (error) {
             console.log("fetchMyFiles error", error);
