@@ -9,6 +9,11 @@ import { IoDownload } from "react-icons/io5";
 import binSVG from "../../assets/bin.svg";
 
 import "./FileInfoItem.css";
+import Avatar from "../Misc/Avatar";
+
+import maleAvatar from "../../assets/male.png";
+import femaleAvatar from "../../assets/female.png";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const FileInfoItem = ({
     file,
@@ -27,11 +32,15 @@ const FileInfoItem = ({
 
     return (
         <div
-            className="FileInfoItem border rounded-2 px-4 py-3 bg-light d-flex align-items-center justify-content-end gap-3 gap-md-5"
+            className={`FileInfoItem border rounded-2 px-4 py-3 bg-light d-flex align-items-center ${
+                file.isShared
+                    ? "justify-content-between"
+                    : "justify-content-end"
+            } gap-3 gap-md-5`}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
         >
-            <div style={{ marginRight: "auto" }}>
+            <div style={file.isShared ? {} : { marginRight: "auto" }}>
                 {file.mimetype === "application/pdf" ? (
                     <FaFilePdf fill="#FF0000" size={30} />
                 ) : imgRegex.test(file.mimetype) ? (
@@ -40,7 +49,11 @@ const FileInfoItem = ({
                     <FaFileAlt fill="#2196F3" size={30} />
                 )}
                 <span className="ms-2 fs-6" style={{ fontWeight: "500" }}>
-                    {file.filename}
+                    {file.isShared
+                        ? file.filename.length > 31
+                            ? file.filename.substr(0, 30) + "..."
+                            : file.filename
+                        : file.filename}
                 </span>
             </div>
             {currentMyFileInfo === file && (
@@ -64,7 +77,38 @@ const FileInfoItem = ({
                     />
                 </div>
             )}
-            <div className="d-flex gap-4 ">
+            <div className="d-flex gap-4 position-relative">
+                {file.isShared && (
+                    <div
+                        className="position-absolute"
+                        style={{ left: "-70px" }}
+                    >
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip id={`tooltip-bottom`}>
+                                    {file.owner.name}
+                                </Tooltip>
+                            }
+                        >
+                            <span
+                                className="me-3 "
+                                style={{ marginTop: "7px" }}
+                            >
+                                <Avatar
+                                    name={file.owner.name}
+                                    size="sm"
+                                    src={
+                                        file.owner.pic ||
+                                        (file.owner.gender === "M"
+                                            ? maleAvatar
+                                            : femaleAvatar)
+                                    }
+                                />
+                            </span>
+                        </OverlayTrigger>
+                    </div>
+                )}
                 <span style={{ textTransform: "uppercase" }}>
                     {file.sizeReadable}
                 </span>

@@ -14,6 +14,8 @@ import { toast } from "react-toastify";
 import FileInfoItem from "../components/FileInfoItem";
 import Loader from "../components/Loader";
 import { useFetchChatsMutation } from "../slices/chatApiSlice";
+import { groupByGroupId } from "../config/fileLogics";
+import SharedFileBox from "../components/SharedFilesBox";
 
 const DrivePage = () => {
     const [activeTab, setActiveTab] = useState("my-files");
@@ -101,6 +103,7 @@ const DrivePage = () => {
                 let tmp = await getFilesInfoAPI(grp.groupId).unwrap();
                 grpFiles = [...grpFiles, ...tmp];
             }
+            grpFiles = groupByGroupId(grpFiles);
             setSharedFilesInfo(prev => grpFiles);
         } catch (error) {
             toast.error("Error in fetching Group Directories");
@@ -243,10 +246,20 @@ const DrivePage = () => {
                                     eventKey="shared-files"
                                     className="text-center py-4"
                                 >
-                                    <h4>Shared Files</h4>
-                                    <p>
-                                        Files shared with you will appear here.
-                                    </p>
+                                    {loadingFileInfo && <Loader />}
+                                    {sharedFilesInfo.length > 0 ? (
+                                        <SharedFileBox
+                                            sharedFilesInfo={sharedFilesInfo}
+                                        />
+                                    ) : (
+                                        <div>
+                                            <p className="mt-4 fw-semibold fs-3 mb-0 d-flex align-items-center justify-content-center gap-3">
+                                                Your Shared files <br /> will be
+                                                displayed here.
+                                                <FaRegSmile size={60} />
+                                            </p>
+                                        </div>
+                                    )}
                                 </Tab.Pane>
                                 <Tab.Pane
                                     eventKey="upload-file"
