@@ -32,7 +32,8 @@ const getFilesInfo = asyncHandler(async (req, res) => {
             .sort({
                 updatedAt: -1
             })
-            .populate("groupId", "_id chatName");
+            .populate("groupId", "_id chatName")
+            .populate("owner", "-password");
         res.status(200).json(data);
         return;
     }
