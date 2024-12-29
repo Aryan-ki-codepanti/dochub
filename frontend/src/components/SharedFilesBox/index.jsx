@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import FileInfoItem from "../FileInfoItem";
 
-const SharedFileBox = ({ sharedFilesInfo }) => {
+const SharedFileBox = ({
+    sharedFilesInfo,
+    handleDownload,
+    handleView,
+    handleDelete
+}) => {
     const [groupFilter, setGroupFilter] = useState("none");
     const [currentGroupFiles, setCurrentGroupFiles] = useState([]);
 
@@ -20,6 +25,14 @@ const SharedFileBox = ({ sharedFilesInfo }) => {
             sharedFilesInfo.find(x => x.groupId === newF)
         );
     };
+
+    useEffect(() => {
+        if (groupFilter !== "none")
+            setCurrentGroupFiles(prev =>
+                sharedFilesInfo.find(x => x.groupId === groupFilter)
+            );
+    }, [sharedFilesInfo]);
+
     return (
         <div>
             <h2>Shared Files</h2>
@@ -42,7 +55,9 @@ const SharedFileBox = ({ sharedFilesInfo }) => {
 
                 {groupFilter === "none" ? (
                     <>
-                        <p>Select a group to access shared files</p>
+                        <p className="mt-2 text-danger">
+                            Select a group to access shared files
+                        </p>
                     </>
                 ) : (
                     <div className="mt-5 w-100">
@@ -77,6 +92,9 @@ const SharedFileBox = ({ sharedFilesInfo }) => {
                                     onMouseLeave={e =>
                                         setSelectedGroupFile(prev => null)
                                     }
+                                    handleDownload={handleDownload}
+                                    handleView={handleView}
+                                    handleDelete={handleDelete}
                                 />
                             ))}
                         </div>

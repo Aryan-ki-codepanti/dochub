@@ -34,15 +34,13 @@ const DrivePage = () => {
     const [allGroups, setAllGroups] = useState([]);
     const [sharedFilesInfo, setSharedFilesInfo] = useState([]);
 
-    const handleDownload = async fileInfo => {
+    const handleDownload = async data => {
         try {
-            const fileBlob = await downloadFileAPI({
-                fileInfo
-            }).unwrap();
+            const fileBlob = await downloadFileAPI(data).unwrap();
             const url = window.URL.createObjectURL(fileBlob);
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", fileInfo.filename);
+            link.setAttribute("download", data.fileInfo.filename);
             document.body.appendChild(link);
             link.click();
             link.parentNode.removeChild(link);
@@ -51,9 +49,9 @@ const DrivePage = () => {
             toast.error("Error downloading file");
         }
     };
-    const handleView = async fileInfo => {
+    const handleView = async data => {
         try {
-            const fileBlob = await viewFileAPI({ fileInfo }).unwrap();
+            const fileBlob = await viewFileAPI(data).unwrap();
             const url = window.URL.createObjectURL(fileBlob);
             window.open(url, "_blank");
         } catch (error) {
@@ -62,14 +60,15 @@ const DrivePage = () => {
         }
     };
 
-    const handleDelete = async fileInfo => {
+    const handleDelete = async data => {
         try {
-            const data = await deleteFileAPI({ fileInfo }).unwrap();
+            const resp = await deleteFileAPI(data).unwrap();
 
-            if (!data.success) throw new Error("Error in deleting file");
+            if (!resp.success) throw new Error("Error in deleting file");
 
-            setMyFilesInfo(prev => prev.filter(f => f._id !== fileInfo._id));
-            toast.success("File Deleted successfully ");
+            toast.success("File Deleted successfully");
+            fetchMyFiles();
+            fetchGroupDirs();
         } catch (error) {
             toast.error("Error in deleting file");
             console.log("Error in deleting file", error);
@@ -90,6 +89,7 @@ const DrivePage = () => {
     };
 
     const fetchGroupDirs = async () => {
+        console.log("refetched");
         try {
             let allChats = await fetchChatsAPI().unwrap();
             allChats = allChats
@@ -250,6 +250,9 @@ const DrivePage = () => {
                                     {sharedFilesInfo.length > 0 ? (
                                         <SharedFileBox
                                             sharedFilesInfo={sharedFilesInfo}
+                                            handleDownload={handleDownload}
+                                            handleView={handleView}
+                                            handleDelete={handleDelete}
                                         />
                                     ) : (
                                         <div>

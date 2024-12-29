@@ -59,17 +59,32 @@ const FileInfoItem = ({
             {currentMyFileInfo === file && (
                 <div className="d-flex align-items-center gap-2 gap-md-3 mx-3">
                     <FaBookReader
-                        onClick={e => handleView(file)}
+                        onClick={e =>
+                            handleView({
+                                fileInfo: file,
+                                groupId: file?.groupId?._id
+                            })
+                        }
                         cursor="pointer"
                         size={20}
                     />
                     <IoDownload
-                        onClick={e => handleDownload(file)}
+                        onClick={e =>
+                            handleDownload({
+                                fileInfo: file,
+                                groupId: file?.groupId?._id
+                            })
+                        }
                         cursor="pointer"
                         size={20}
                     />
                     <img
-                        onClick={e => handleDelete(file)}
+                        onClick={e =>
+                            handleDelete({
+                                fileInfo: file,
+                                groupId: file?.groupId?._id
+                            })
+                        }
                         width={20}
                         style={{ cursor: "pointer" }}
                         src={binSVG}
