@@ -103,17 +103,19 @@ const uploadFiles = asyncHandler(async (req, res) => {
 //@access          Protected
 const downloadFile = asyncHandler(async (req, res) => {
     const { user } = req;
-    const { fileInfo } = req.body;
+    const { fileInfo, groupId } = req.body;
 
-    // if user is not owner of file
-    if (fileInfo.owner.toString() !== user._id.toString())
+    // groupfile delete
+
+    // if user is not owner of personal file
+    if (!groupId && fileInfo.owner.toString() !== user._id.toString())
         return res
             .status(401)
             .json({ message: "You can not access this file" });
 
-    const filePath = path.join(
+    let filePath = path.join(
         UPLOAD_DIR,
-        user._id.toString(),
+        groupId ? groupId.toString() : user._id.toString(),
         fileInfo.filename
     );
 
@@ -135,17 +137,17 @@ const downloadFile = asyncHandler(async (req, res) => {
 //@access          Protected
 const viewFile = asyncHandler(async (req, res) => {
     const { user } = req;
-    const { fileInfo } = req.body;
+    const { fileInfo, groupId } = req.body;
 
     // if user is not owner of file
-    if (fileInfo.owner.toString() !== user._id.toString())
+    if (!groupId && fileInfo.owner.toString() !== user._id.toString())
         return res
             .status(401)
             .json({ message: "You can not access this file" });
 
     const filePath = path.join(
         UPLOAD_DIR,
-        user._id.toString(),
+        groupId ? groupId.toString() : user._id.toString(),
         fileInfo.filename
     );
 
@@ -169,17 +171,17 @@ const viewFile = asyncHandler(async (req, res) => {
 //@access          Protected
 const deleteFile = asyncHandler(async (req, res) => {
     const { user } = req;
-    const { fileInfo } = req.body;
+    const { fileInfo, groupId } = req.body;
 
-    // if user is not owner of file
-    if (fileInfo.owner.toString() !== user._id.toString())
+    // if user is not owner of personal file
+    if (!groupId && fileInfo.owner.toString() !== user._id.toString())
         return res
             .status(401)
             .json({ message: "You can not access this file" });
 
     const filePath = path.join(
         UPLOAD_DIR,
-        user._id.toString(),
+        groupId ? groupId.toString() : user._id.toString(),
         fileInfo.filename
     );
 
