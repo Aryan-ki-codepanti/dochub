@@ -9,6 +9,7 @@ import {
     useDownloadFileFromDriveMutation,
     useDownloadFileMutation,
     useGetFilesInfoMutation,
+    useViewFileFromDriveMutation,
     useViewFileMutation
 } from "../slices/filesApiSlice";
 import { useEffect } from "react";
@@ -35,6 +36,7 @@ const DrivePage = () => {
     // g drive endpts
     const [deleteFileFromDriveAPI] = useDeleteFileFromDriveMutation();
     const [downloadFileFromDriveAPI] = useDownloadFileFromDriveMutation();
+    const [viewFileFromDriveAPI] = useViewFileFromDriveMutation();
 
     // group directory for upload and shared files
     const [allGroups, setAllGroups] = useState([]);
@@ -58,7 +60,8 @@ const DrivePage = () => {
     };
     const handleView = async data => {
         try {
-            const fileBlob = await viewFileAPI(data).unwrap();
+            // const fileBlob = await viewFileAPI(data).unwrap();
+            const fileBlob = await viewFileFromDriveAPI(data).unwrap();
             const url = window.URL.createObjectURL(fileBlob);
             window.open(url, "_blank");
         } catch (error) {

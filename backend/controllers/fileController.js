@@ -285,7 +285,10 @@ const deleteFileFromDriveController = asyncHandler(async (req, res) => {
     }
 });
 
-const downloadFileFromDriveToClient = async (req, res) => {
+//@description     Download a specific file from g drive
+//@route           POST /api/files/download-drive
+//@access          Protected
+const downloadFileFromDriveToClient = asyncHandler(async (req, res) => {
     const { user } = req;
     const { fileInfo, groupId } = req.body;
 
@@ -317,7 +320,37 @@ const downloadFileFromDriveToClient = async (req, res) => {
         console.error("Error downloading file:", error.message);
         res.status(500).json({ error: "Failed to download file." });
     }
-};
+});
+
+//@description     View a specific file from Google Drive
+//@route           POST /api/files/view-drive
+//@access          Protected
+const viewFileFromDrive = asyncHandler(async (req, res) => {
+    const { user } = req;
+    const { fileInfo, groupId } = req.body;
+
+    // Check if the user is not the owner and trying to view a personal file
+    if (!groupId && fileInfo.owner.toString() !== user._id.toString())
+        return res.status(401).json({ message: "You cannot view this file" });
+
+    let fileId = fileInfo.driveId;
+    let fileName = fileInfo.filename;
+
+    try {
+        const response = await drive.files.get(
+            { fileId, alt: "media" },
+            { responseType: "stream" }
+        );
+
+        res.setHeader("Content-Type", response.headers["content-type"]);
+        res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
+
+        response.data.pipe(res);
+    } catch (error) {
+        console.error("Error viewing file:", error.message);
+        res.status(500).json({ error: "Failed to view the file." });
+    }
+});
 
 export {
     getFilesInfo,
@@ -327,5 +360,6 @@ export {
     deleteFile,
     uploadFilesToDriveController,
     deleteFileFromDriveController,
-    downloadFileFromDriveToClient
+    downloadFileFromDriveToClient,
+    viewFileFromDrive
 };
