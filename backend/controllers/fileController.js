@@ -5,6 +5,11 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import {
+    uploadFileToDrive,
+    deleteFileFromDrive
+} from "../config/googleDriveUtils.js";
+
 import mime from "mime";
 import Chat from "../models/chatModel.js";
 const __filename = fileURLToPath(import.meta.url);
@@ -209,4 +214,44 @@ const deleteFile = asyncHandler(async (req, res) => {
     });
 });
 
-export { getFilesInfo, uploadFiles, downloadFile, viewFile, deleteFile };
+// GOOGLE DRIVE CONTROLLERS
+//@description     Upload 1 to 5 files to /uploads/userId  directory or /uploads/groupId
+//@route           POST /api/files/upload/<optional :groupId>
+//@access          Protected
+const uploadFilesToDriveController = asyncHandler(async (req, res) => {
+    const folderName = req.params.groupId || req.user._id.toString();
+    let fileData = [];
+
+    for (const file of req.files) {
+        const uploadedFile = await uploadFileToDrive(file, folderName);
+        const fileObj = {
+            filename: uploadedFile.name,
+            driveId: uploadedFile.id,
+            size: file.size,
+            sizeReadable: filesize(file.size),
+            path: `https://drive.google.com/file/d/${uploadedFile.id}/view`,
+            mimetype: file.mimetype,
+            owner: req.user._id,
+            groupId: req.params.groupId || null,
+            isShared: !!req.params.groupId
+        };
+
+        const savedFile = await FileModel.findOneAndUpdate(
+            { driveId: uploadedFile.id },
+            fileObj,
+            { new: true, upsert: true }
+        ).populate("owner", "-password");
+        fileData.push(savedFile);
+    }
+
+    res.status(201).json(fileData);
+});
+
+export {
+    getFilesInfo,
+    uploadFiles,
+    downloadFile,
+    viewFile,
+    deleteFile,
+    uploadFilesToDriveController
+};

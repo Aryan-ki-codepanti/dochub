@@ -12,6 +12,15 @@ export const filesApiSlice = apiSlice.injectEndpoints({
                 body: formData
             })
         }),
+        uploadToDriveFiles: builder.mutation({
+            query: ({ formData, groupId }) => ({
+                url: groupId
+                    ? `${FILES_URL}/upload-drive/${groupId}`
+                    : `${FILES_URL}/upload-drive`,
+                method: "POST",
+                body: formData
+            })
+        }),
         getFilesInfo: builder.mutation({
             query: groupId => ({
                 url: groupId ? `${FILES_URL}/${groupId}` : `${FILES_URL}`,
@@ -49,5 +58,6 @@ export const {
     useGetFilesInfoMutation,
     useDownloadFileMutation,
     useViewFileMutation,
-    useDeleteFileMutation
+    useDeleteFileMutation,
+    useUploadToDriveFilesMutation
 } = filesApiSlice;

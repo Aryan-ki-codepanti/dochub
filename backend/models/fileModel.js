@@ -9,7 +9,8 @@ const fileModel = mongoose.Schema(
         mimetype: { type: String, required: true },
         isShared: { type: Boolean, default: false },
         groupId: { type: mongoose.Schema.Types.ObjectId, ref: "Chat" },
-        owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+        owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        driveId: { type: String } // Stores Google Drive file ID
     },
     { timestamps: true }
 );

@@ -7,15 +7,31 @@ import {
     downloadFile,
     getFilesInfo,
     uploadFiles,
-    viewFile
+    viewFile,
+    uploadFilesToDriveController
 } from "../controllers/fileController.js";
+import multer from "multer";
 
 const router = express.Router();
+
+const uploadToMemory = multer({ storage: multer.memoryStorage() });
 
 router.get("/", protect, getFilesInfo);
 router.get("/:groupId", protect, getFilesInfo);
 router.post("/upload", protect, upload.array("files", 5), uploadFiles);
 router.post("/upload/:groupId", protect, upload.array("files", 5), uploadFiles);
+router.post(
+    "/upload-drive",
+    protect,
+    uploadToMemory.array("files", 5),
+    uploadFilesToDriveController
+);
+router.post(
+    "/upload-drive/:groupId",
+    protect,
+    uploadToMemory.array("files", 5),
+    uploadFilesToDriveController
+);
 router.post("/download", protect, downloadFile);
 router.post("/view", protect, viewFile);
 router.post("/delete", protect, deleteFile);

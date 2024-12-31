@@ -3,13 +3,17 @@ import { useDropzone } from "react-dropzone";
 import { Button, Container, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { FaFileUpload, FaFilePdf } from "react-icons/fa";
-import { useUploadFilesMutation } from "../slices/filesApiSlice";
+import {
+    useUploadFilesMutation,
+    useUploadToDriveFilesMutation
+} from "../slices/filesApiSlice";
 
 const FileUploader = ({ allGroups, fetchMyFiles, fetchGroupDirs }) => {
     const [files, setFiles] = useState([]);
     const [uploading, setUploading] = useState(false);
 
     const [uploadFilesApi] = useUploadFilesMutation();
+    const [uploadFilesToDriveApi] = useUploadToDriveFilesMutation();
 
     // save location
     const [saveDirectory, setSaveDirectory] = useState("my");
@@ -59,7 +63,8 @@ const FileUploader = ({ allGroups, fetchMyFiles, fetchGroupDirs }) => {
                     ? { formData }
                     : { formData, groupId: saveDirectory };
             // API REQUEST
-            const resp = await uploadFilesApi(input).unwrap();
+            // const resp = await uploadFilesApi(input).unwrap();
+            const resp = await uploadFilesToDriveApi(input).unwrap();
 
             console.log("FILE UPLOAD RESP", resp);
 
