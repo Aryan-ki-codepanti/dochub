@@ -6,6 +6,7 @@ import FileUploader from "../components/FileUploader";
 import {
     useDeleteFileFromDriveMutation,
     useDeleteFileMutation,
+    useDownloadFileFromDriveMutation,
     useDownloadFileMutation,
     useGetFilesInfoMutation,
     useViewFileMutation
@@ -33,6 +34,7 @@ const DrivePage = () => {
 
     // g drive endpts
     const [deleteFileFromDriveAPI] = useDeleteFileFromDriveMutation();
+    const [downloadFileFromDriveAPI] = useDownloadFileFromDriveMutation();
 
     // group directory for upload and shared files
     const [allGroups, setAllGroups] = useState([]);
@@ -40,7 +42,8 @@ const DrivePage = () => {
 
     const handleDownload = async data => {
         try {
-            const fileBlob = await downloadFileAPI(data).unwrap();
+            // const fileBlob = await downloadFileAPI(data).unwrap();
+            const fileBlob = await downloadFileFromDriveAPI(data).unwrap();
             const url = window.URL.createObjectURL(fileBlob);
             const link = document.createElement("a");
             link.href = url;

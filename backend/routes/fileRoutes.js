@@ -9,7 +9,8 @@ import {
     uploadFiles,
     viewFile,
     uploadFilesToDriveController,
-    deleteFileFromDriveController
+    deleteFileFromDriveController,
+    downloadFileFromDriveToClient
 } from "../controllers/fileController.js";
 import multer from "multer";
 
@@ -34,6 +35,7 @@ router.post(
     uploadFilesToDriveController
 );
 router.post("/download", protect, downloadFile);
+router.post("/download-drive", protect, downloadFileFromDriveToClient);
 router.post("/view", protect, viewFile);
 router.post("/delete", protect, deleteFile);
 router.post("/delete-drive", protect, deleteFileFromDriveController);

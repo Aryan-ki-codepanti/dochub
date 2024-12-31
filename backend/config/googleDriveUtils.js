@@ -15,7 +15,7 @@ const auth = new google.auth.OAuth2(
 );
 auth.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN });
 
-const drive = google.drive({ version: "v3", auth });
+export const drive = google.drive({ version: "v3", auth });
 
 const bufferToStream = buffer => {
     const stream = new PassThrough();
@@ -83,8 +83,4 @@ export const downloadFileFromDrive = async (fileId, dest) => {
     return new Promise((resolve, reject) => {
         fileStream.on("finish", () => resolve(destPath)).on("error", reject);
     });
-};
-
-export const deleteFileFromDrive = async fileId => {
-    await drive.files.delete({ fileId });
 };

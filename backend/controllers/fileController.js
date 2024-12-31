@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 
 import {
     uploadFileToDrive,
-    deleteFileFromDrive
+    drive // drive object with creds
 } from "../config/googleDriveUtils.js";
 
 import mime from "mime";
@@ -172,7 +172,7 @@ const viewFile = asyncHandler(async (req, res) => {
 });
 
 //@description     Delete a specific file
-//@route           DELETE /api/files
+//@route           POST /api/files
 //@access          Protected
 const deleteFile = asyncHandler(async (req, res) => {
     const { user } = req;
@@ -217,7 +217,7 @@ const deleteFile = asyncHandler(async (req, res) => {
 // GOOGLE DRIVE CONTROLLERS
 
 //@description     Upload 1 to 5 files to /uploads/userId  directory or /uploads/groupId
-//@route           POST /api/files/upload/<optional :groupId>
+//@route           POST /api/files/upload-drive/<optional :groupId>
 //@access          Protected
 const uploadFilesToDriveController = asyncHandler(async (req, res) => {
     const folderName = req.params.groupId || req.user._id.toString();
@@ -249,7 +249,7 @@ const uploadFilesToDriveController = asyncHandler(async (req, res) => {
 });
 
 //@description     Delete a specific file
-//@route           DELETE /api/files
+//@route           POST /api/files/delete-drive
 //@access          Protected
 const deleteFileFromDriveController = asyncHandler(async (req, res) => {
     const { user } = req;
@@ -273,7 +273,8 @@ const deleteFileFromDriveController = asyncHandler(async (req, res) => {
 
     // Delete the file from drive
     try {
-        await deleteFileFromDrive(fileInfo.driveId);
+        await drive.files.delete({ fileId: fileInfo.driveId });
+
         res.status(200).json({
             success: true,
             message: "File deleted successfully."
@@ -284,6 +285,40 @@ const deleteFileFromDriveController = asyncHandler(async (req, res) => {
     }
 });
 
+const downloadFileFromDriveToClient = async (req, res) => {
+    const { user } = req;
+    const { fileInfo, groupId } = req.body;
+
+    // if user is not owner of personal file
+    if (!groupId && fileInfo.owner.toString() !== user._id.toString())
+        return res
+            .status(401)
+            .json({ message: "You can not access this file" });
+
+    let fileId = fileInfo.driveId;
+    let fileName = fileInfo.filename;
+
+    try {
+        const response = await drive.files.get(
+            { fileId, alt: "media" },
+            { responseType: "stream" }
+        );
+
+        // Set headers to handle file download
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${fileName}"`
+        );
+        res.setHeader("Content-Type", response.headers["content-type"]);
+
+        // Pipe the file stream to the client
+        response.data.pipe(res);
+    } catch (error) {
+        console.error("Error downloading file:", error.message);
+        res.status(500).json({ error: "Failed to download file." });
+    }
+};
+
 export {
     getFilesInfo,
     uploadFiles,
@@ -291,5 +326,6 @@ export {
     viewFile,
     deleteFile,
     uploadFilesToDriveController,
-    deleteFileFromDriveController
+    deleteFileFromDriveController,
+    downloadFileFromDriveToClient
 };
