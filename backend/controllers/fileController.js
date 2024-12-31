@@ -215,6 +215,7 @@ const deleteFile = asyncHandler(async (req, res) => {
 });
 
 // GOOGLE DRIVE CONTROLLERS
+
 //@description     Upload 1 to 5 files to /uploads/userId  directory or /uploads/groupId
 //@route           POST /api/files/upload/<optional :groupId>
 //@access          Protected
@@ -247,11 +248,48 @@ const uploadFilesToDriveController = asyncHandler(async (req, res) => {
     res.status(201).json(fileData);
 });
 
+//@description     Delete a specific file
+//@route           DELETE /api/files
+//@access          Protected
+const deleteFileFromDriveController = asyncHandler(async (req, res) => {
+    const { user } = req;
+    const { fileInfo, groupId } = req.body;
+
+    // if user is not owner of personal file
+    if (!groupId && fileInfo.owner.toString() !== user._id.toString())
+        return res
+            .status(401)
+            .json({ message: "You can not access this file" });
+
+    // Check if the file has id
+    if (!fileInfo.driveId) {
+        return res
+            .status(404)
+            .json({ message: "File not found on google drive." });
+    }
+
+    // delete DB record
+    await FileModel.findOneAndDelete({ driveId: fileInfo.driveId });
+
+    // Delete the file from drive
+    try {
+        await deleteFileFromDrive(fileInfo.driveId);
+        res.status(200).json({
+            success: true,
+            message: "File deleted successfully."
+        });
+    } catch (error) {
+        console.error("Error deleting file:", err);
+        return res.status(500).json({ message: "Failed to delete the file." });
+    }
+});
+
 export {
     getFilesInfo,
     uploadFiles,
     downloadFile,
     viewFile,
     deleteFile,
-    uploadFilesToDriveController
+    uploadFilesToDriveController,
+    deleteFileFromDriveController
 };

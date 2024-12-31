@@ -4,6 +4,7 @@ import { FaRegSmile, FaFile, FaShareAlt, FaUpload } from "react-icons/fa";
 
 import FileUploader from "../components/FileUploader";
 import {
+    useDeleteFileFromDriveMutation,
     useDeleteFileMutation,
     useDownloadFileMutation,
     useGetFilesInfoMutation,
@@ -29,6 +30,9 @@ const DrivePage = () => {
     const [deleteFileAPI] = useDeleteFileMutation();
     const [viewFileAPI] = useViewFileMutation();
     const [fetchChatsAPI] = useFetchChatsMutation();
+
+    // g drive endpts
+    const [deleteFileFromDriveAPI] = useDeleteFileFromDriveMutation();
 
     // group directory for upload and shared files
     const [allGroups, setAllGroups] = useState([]);
@@ -62,7 +66,8 @@ const DrivePage = () => {
 
     const handleDelete = async data => {
         try {
-            const resp = await deleteFileAPI(data).unwrap();
+            // const resp = await deleteFileAPI(data).unwrap();
+            const resp = await deleteFileFromDriveAPI(data).unwrap();
 
             if (!resp.success) throw new Error("Error in deleting file");
 

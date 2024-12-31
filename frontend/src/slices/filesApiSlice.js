@@ -49,6 +49,13 @@ export const filesApiSlice = apiSlice.injectEndpoints({
                 method: "POST",
                 body: data
             })
+        }),
+        deleteFileFromDrive: builder.mutation({
+            query: data => ({
+                url: `${FILES_URL}/delete-drive`,
+                method: "POST",
+                body: data
+            })
         })
     })
 });
@@ -59,5 +66,6 @@ export const {
     useDownloadFileMutation,
     useViewFileMutation,
     useDeleteFileMutation,
-    useUploadToDriveFilesMutation
+    useUploadToDriveFilesMutation,
+    useDeleteFileFromDriveMutation
 } = filesApiSlice;
