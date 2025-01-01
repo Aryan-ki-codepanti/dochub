@@ -22,6 +22,22 @@
     scrollbar-width: none;
 }
 
+.singleChatBox.online-chat {
+    padding-bottom: 0.5rem !important;
+}
+
+.singleChatBox.online-chat .sender-name span:first-child {
+    margin-bottom: -10px;
+}
+
+.sender-name span:nth-of-type(2) {
+    font-size: 0.75rem;
+}
+
+.brace {
+    display: none;
+}
+
 @media (min-width: 768px) {
     .singleChatBox {
         font-size: 30px;
@@ -29,5 +45,14 @@
 
     .singleChatBox .arrow-left {
         display: none;
+    }
+}
+@media (max-width: 768px) {
+    .singleChatBox.online-chat .sender-name {
+        flex-direction: row !important;
+        align-items: baseline;
+    }
+    .brace {
+        display: initial;
     }
 }

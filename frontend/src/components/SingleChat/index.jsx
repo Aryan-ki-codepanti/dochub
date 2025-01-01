@@ -24,7 +24,9 @@ let socket = null,
     selectedChatCompare = null;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-    const { userInfo, chatInfo } = useSelector(state => state.auth); // {chats, selectedChat}
+    const { userInfo, chatInfo, activeUsers } = useSelector(
+        state => state.auth
+    ); // {chats, selectedChat}
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [newMessage, setNewMessage] = useState("");
@@ -130,7 +132,18 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         <>
             {chatInfo.selectedChat ? (
                 <>
-                    <div className="singleChatBox d-flex px-2 pb-3 w-100 align-items-center w-100">
+                    <div
+                        className={`singleChatBox ${
+                            activeUsers.includes(
+                                getSender(
+                                    userInfo._id,
+                                    chatInfo.selectedChat.users
+                                )._id
+                            )
+                                ? "online-chat"
+                                : ""
+                        } d-flex px-2 pb-3 w-100 align-items-center w-100`}
+                    >
                         <FaArrowLeft
                             className="arrow-left rounded"
                             size={30}
@@ -145,12 +158,29 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         />
                         {!chatInfo.selectedChat.isGroupChat ? (
                             <>
-                                {
-                                    getSender(
-                                        userInfo._id,
-                                        chatInfo.selectedChat.users
-                                    ).name
-                                }
+                                <div className="d-flex flex-column sender-name">
+                                    <span>
+                                        {
+                                            getSender(
+                                                userInfo._id,
+                                                chatInfo.selectedChat.users
+                                            ).name
+                                        }
+                                    </span>
+                                    {activeUsers.includes(
+                                        getSender(
+                                            userInfo._id,
+                                            chatInfo.selectedChat.users
+                                        )._id
+                                    ) && (
+                                        <span className="text-muted">
+                                            <span className="brace">(</span>
+                                            online
+                                            <span className="brace">)</span>
+                                        </span>
+                                    )}
+                                </div>
+
                                 <ProfileModal
                                     user={getSender(
                                         userInfo._id,
