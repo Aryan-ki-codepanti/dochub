@@ -4,19 +4,20 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     useGetAllPeopleMutation,
     useUpdateFriendStatusMutation
-} from "../slices/friendsApiSlice";
-import { setCredentials } from "../slices/authSlice";
-import { useAccessChatMutation } from "../slices/chatApiSlice";
+} from "../../slices/friendsApiSlice";
+import { setCredentials } from "../../slices/authSlice";
+import { useAccessChatMutation } from "../../slices/chatApiSlice";
 import { toast } from "react-toastify";
-import Avatar from "./Misc/Avatar";
-import maleAvatar from "../assets/male.png";
-import femaleAvatar from "../assets/female.png";
-import noResultsFound from "../assets/NoResultsFound.avif";
-import { useSearchUsersMutation } from "../slices/usersApiSlice";
+import Avatar from "../Misc/Avatar";
+import maleAvatar from "../../assets/male.png";
+import femaleAvatar from "../../assets/female.png";
+import noResultsFound from "../../assets/NoResultsFound.avif";
+import { useSearchUsersMutation } from "../../slices/usersApiSlice";
 import { FaSearch } from "react-icons/fa";
+import "./Users.css";
 
 const Users = ({ users, peopleFilter }) => {
-    const { userInfo } = useSelector(state => state.auth);
+    const { userInfo, activeUsers } = useSelector(state => state.auth);
 
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
@@ -253,6 +254,9 @@ const Users = ({ users, peopleFilter }) => {
                                                         : femaleAvatar)
                                                 }
                                             />
+                                            {activeUsers.includes(user._id) && (
+                                                <span className="active-status" />
+                                            )}
                                             <Card.Body className="d-flex flex-column text-center">
                                                 <Card.Title className="mb-3">
                                                     {user.name}
@@ -319,52 +323,61 @@ const Users = ({ users, peopleFilter }) => {
                         )}
                     </>
                 ) : (
-                    filteredUsers.map(user => (
-                        <Col key={user._id} md={6} lg={4} className="mb-5">
-                            <Card className="h-100 shadow-sm d-flex flex-column align-items-center">
-                                <Avatar
-                                    styles={{
-                                        transform: "translateY(-40px)",
-                                        marginBottom: "-40px",
-                                        border: "2px solid #eaeaea"
-                                    }}
-                                    size="lg"
-                                    cursor="initial"
-                                    src={
-                                        user.pic ||
-                                        (user.gender === "M"
-                                            ? maleAvatar
-                                            : femaleAvatar)
-                                    }
-                                />
-                                <Card.Body className="d-flex flex-column text-center">
-                                    <Card.Title className="mb-3">
-                                        {user.name}
-                                    </Card.Title>
-                                    {user.gender && (
-                                        <Card.Subtitle
-                                            className={`mb-3 text-${
-                                                user.gender === "M"
-                                                    ? "primary"
-                                                    : "danger"
-                                            }`}
-                                        >
-                                            Gender:{" "}
-                                            {user.gender === "M"
-                                                ? "Male"
-                                                : "Female"}
-                                        </Card.Subtitle>
+                    <>
+                        {peopleFilter === "friends" && (
+                            <span>Active and non</span>
+                        )}
+                        {filteredUsers.map(user => (
+                            <Col key={user._id} md={6} lg={4} className="mb-5">
+                                <Card className="h-100 shadow-sm d-flex flex-column align-items-center">
+                                    <Avatar
+                                        styles={{
+                                            transform: "translateY(-40px)",
+                                            marginBottom: "-40px",
+                                            border: "2px solid #eaeaea"
+                                        }}
+                                        size="lg"
+                                        cursor="initial"
+                                        src={
+                                            user.pic ||
+                                            (user.gender === "M"
+                                                ? maleAvatar
+                                                : femaleAvatar)
+                                        }
+                                    />
+                                    {activeUsers.includes(user._id) && (
+                                        <span className="active-status" />
                                     )}
-                                    <Card.Text className="text-muted">
-                                        <small>Email : {user.email}</small>
-                                    </Card.Text>
-                                    <div className="mt-auto">
-                                        <RenderButton user={user} />
-                                    </div>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    ))
+
+                                    <Card.Body className="d-flex flex-column text-center">
+                                        <Card.Title className="mb-3">
+                                            {user.name}
+                                        </Card.Title>
+                                        {user.gender && (
+                                            <Card.Subtitle
+                                                className={`mb-3 text-${
+                                                    user.gender === "M"
+                                                        ? "primary"
+                                                        : "danger"
+                                                }`}
+                                            >
+                                                Gender:{" "}
+                                                {user.gender === "M"
+                                                    ? "Male"
+                                                    : "Female"}
+                                            </Card.Subtitle>
+                                        )}
+                                        <Card.Text className="text-muted">
+                                            <small>Email : {user.email}</small>
+                                        </Card.Text>
+                                        <div className="mt-auto">
+                                            <RenderButton user={user} />
+                                        </div>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ))}
+                    </>
                 )}
             </Row>
         </div>

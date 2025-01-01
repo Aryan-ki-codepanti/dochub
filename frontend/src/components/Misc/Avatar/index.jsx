@@ -17,7 +17,7 @@ const Avatar = ({
     };
     return (
         <div
-            className={`avatar ${className}`}
+            className={`avatar position-relative ${className}`}
             style={{
                 width: sizes[size] || sizes.md,
                 height: sizes[size] || sizes.md,
