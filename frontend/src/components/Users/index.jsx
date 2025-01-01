@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Card, Button, Form, InputGroup } from "react-bootstrap";
+import {
+    Row,
+    Col,
+    Card,
+    Button,
+    Form,
+    InputGroup,
+    ButtonGroup
+} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
     useGetAllPeopleMutation,
@@ -22,6 +30,9 @@ const Users = ({ users, peopleFilter }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
+
+    // active status
+    const [activeFilter, setActiveFilter] = useState("all");
 
     const [updateFriendStatus, { isLoading }] = useUpdateFriendStatusMutation();
     const [getAllPeople, { isLoading2 }] = useGetAllPeopleMutation();
@@ -194,6 +205,12 @@ const Users = ({ users, peopleFilter }) => {
         }
     };
 
+    const filterFuncByStats = friend => {
+        if (activeFilter === "active") return activeUsers.includes(friend._id);
+        if (activeFilter === "offline")
+            return !activeUsers.includes(friend._id);
+        return true; // For 'all'
+    };
     useEffect(() => {
         // filter users
         if (peopleFilter === "requests")
@@ -325,58 +342,110 @@ const Users = ({ users, peopleFilter }) => {
                 ) : (
                     <>
                         {peopleFilter === "friends" && (
-                            <span>Active and non</span>
-                        )}
-                        {filteredUsers.map(user => (
-                            <Col key={user._id} md={6} lg={4} className="mb-5">
-                                <Card className="h-100 shadow-sm d-flex flex-column align-items-center">
-                                    <Avatar
-                                        styles={{
-                                            transform: "translateY(-40px)",
-                                            marginBottom: "-40px",
-                                            border: "2px solid #eaeaea"
-                                        }}
-                                        size="lg"
-                                        cursor="initial"
-                                        src={
-                                            user.pic ||
-                                            (user.gender === "M"
-                                                ? maleAvatar
-                                                : femaleAvatar)
+                            <Row
+                                className="d-flex justify-content-center align-items-center mb-5"
+                                style={{ marginTop: "-1rem" }}
+                            >
+                                <ButtonGroup className="w-50">
+                                    <Button
+                                        variant={
+                                            activeFilter === "all"
+                                                ? "primary"
+                                                : "outline-primary"
                                         }
-                                    />
-                                    {activeUsers.includes(user._id) && (
-                                        <span className="active-status" />
-                                    )}
+                                        onClick={() => setActiveFilter("all")}
+                                    >
+                                        All
+                                    </Button>
+                                    <Button
+                                        variant={
+                                            activeFilter === "active"
+                                                ? "success"
+                                                : "outline-success"
+                                        }
+                                        onClick={() =>
+                                            setActiveFilter("active")
+                                        }
+                                    >
+                                        Active
+                                    </Button>
+                                    <Button
+                                        variant={
+                                            activeFilter === "offline"
+                                                ? "secondary"
+                                                : "outline-secondary"
+                                        }
+                                        onClick={() =>
+                                            setActiveFilter("offline")
+                                        }
+                                    >
+                                        Offline
+                                    </Button>
+                                </ButtonGroup>
+                            </Row>
+                        )}
+                        {filteredUsers.map(
+                            user =>
+                                (peopleFilter !== "friends" ||
+                                    filterFuncByStats(user)) && (
+                                    <Col
+                                        key={user._id}
+                                        md={6}
+                                        lg={4}
+                                        className="mb-5"
+                                    >
+                                        <Card className="h-100 shadow-sm d-flex flex-column align-items-center">
+                                            <Avatar
+                                                styles={{
+                                                    transform:
+                                                        "translateY(-40px)",
+                                                    marginBottom: "-40px",
+                                                    border: "2px solid #eaeaea"
+                                                }}
+                                                size="lg"
+                                                cursor="initial"
+                                                src={
+                                                    user.pic ||
+                                                    (user.gender === "M"
+                                                        ? maleAvatar
+                                                        : femaleAvatar)
+                                                }
+                                            />
+                                            {activeUsers.includes(user._id) && (
+                                                <span className="active-status" />
+                                            )}
 
-                                    <Card.Body className="d-flex flex-column text-center">
-                                        <Card.Title className="mb-3">
-                                            {user.name}
-                                        </Card.Title>
-                                        {user.gender && (
-                                            <Card.Subtitle
-                                                className={`mb-3 text-${
-                                                    user.gender === "M"
-                                                        ? "primary"
-                                                        : "danger"
-                                                }`}
-                                            >
-                                                Gender:{" "}
-                                                {user.gender === "M"
-                                                    ? "Male"
-                                                    : "Female"}
-                                            </Card.Subtitle>
-                                        )}
-                                        <Card.Text className="text-muted">
-                                            <small>Email : {user.email}</small>
-                                        </Card.Text>
-                                        <div className="mt-auto">
-                                            <RenderButton user={user} />
-                                        </div>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                        ))}
+                                            <Card.Body className="d-flex flex-column text-center">
+                                                <Card.Title className="mb-3">
+                                                    {user.name}
+                                                </Card.Title>
+                                                {user.gender && (
+                                                    <Card.Subtitle
+                                                        className={`mb-3 text-${
+                                                            user.gender === "M"
+                                                                ? "primary"
+                                                                : "danger"
+                                                        }`}
+                                                    >
+                                                        Gender:{" "}
+                                                        {user.gender === "M"
+                                                            ? "Male"
+                                                            : "Female"}
+                                                    </Card.Subtitle>
+                                                )}
+                                                <Card.Text className="text-muted">
+                                                    <small>
+                                                        Email : {user.email}
+                                                    </small>
+                                                </Card.Text>
+                                                <div className="mt-auto">
+                                                    <RenderButton user={user} />
+                                                </div>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+                                )
+                        )}
                     </>
                 )}
             </Row>
