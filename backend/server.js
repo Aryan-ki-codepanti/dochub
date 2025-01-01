@@ -11,6 +11,7 @@ import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import fileRoutes from "./routes/fileRoutes.js";
 import { Server } from "socket.io";
+import { deleteMapEntryByValue } from "./utils/mapUtils.js";
 
 const port = process.env.PORT || 5000;
 
@@ -62,8 +63,37 @@ const io = new Server(server, {
     pingTimeout: 60000
 });
 
+let activeUsers = new Set();
+let socketToUser = new Map();
+
 io.on("connection", socket => {
     console.log(`Connected to socket.io`);
+
+    // active status
+    socket.on("heartbeat", userId => {
+        if (userId) {
+            activeUsers.add(userId);
+
+            socketToUser = deleteMapEntryByValue(socketToUser, userId);
+            socketToUser.set(socket.id, userId);
+
+            // console.log("active", activeUsers);
+            // console.log("map", socketToUser);
+            // console.log(userId, "connect user socket -> ", socket.id);
+            io.emit("update-active-users", Array.from(activeUsers));
+        }
+    });
+
+    socket.on("disconnect", () => {
+        activeUsers.delete(socketToUser.get(socket.id));
+        socketToUser.delete(socket.id);
+        io.emit("update-active-users", Array.from(activeUsers));
+
+        // console.log("disconnect user socket -> ", socket.id);
+        // console.log("disconnected");
+        // console.log("active", activeUsers);
+        // console.log("map", socketToUser);
+    });
 
     socket.on("setup", userData => {
         //create a room
