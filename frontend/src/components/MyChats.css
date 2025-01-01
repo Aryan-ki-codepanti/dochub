@@ -36,6 +36,16 @@
     margin: 0;
 }
 
+.chatContainer-item .active-chat {
+    width: 22px;
+    aspect-ratio: 1;
+    background: #198754;
+    position: absolute;
+    top: 26px;
+    right: 8px;
+    border-radius: 50%;
+}
+
 @media (min-width: 768px) {
     .MyChatsBox {
         display: flex !important;

@@ -13,7 +13,9 @@ import GroupChatModal from "./GroupChatModal";
 
 const MyChats = ({ fetchAgain }) => {
     const [loggedUser, setLoggedUser] = useState(null);
-    const { userInfo, chatInfo } = useSelector(state => state.auth);
+    const { userInfo, chatInfo, activeUsers } = useSelector(
+        state => state.auth
+    );
     const dispatch = useDispatch();
     const [fetchChats, { isLoading }] = useFetchChatsMutation();
 
@@ -52,7 +54,14 @@ const MyChats = ({ fetchAgain }) => {
                         {chatInfo.chats.map(chat => (
                             <div
                                 key={chat._id}
-                                className="chatContainer-item"
+                                className={`chatContainer-item  position-relative ${
+                                    !chat.isGroupChat &&
+                                    activeUsers.includes(
+                                        getSender(userInfo._id, chat.users)._id
+                                    )
+                                        ? "border border-2 border-success"
+                                        : ""
+                                }`}
                                 style={
                                     chatInfo.selectedChat === chat
                                         ? {
@@ -92,6 +101,11 @@ const MyChats = ({ fetchAgain }) => {
                                             : chat.latestMessage.content}
                                     </p>
                                 )}
+
+                                {!chat.isGroupChat &&
+                                    activeUsers.includes(
+                                        getSender(userInfo._id, chat.users)._id
+                                    ) && <div className="active-chat" />}
                             </div>
                         ))}
                     </div>
