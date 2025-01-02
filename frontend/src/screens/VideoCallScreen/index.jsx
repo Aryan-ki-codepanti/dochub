@@ -59,6 +59,12 @@ const VideoCallScreen = () => {
         connectionRef.current = peer;
     };
 
+    const handleRejectCall = () => {
+        setReceivingCall(prev => false);
+        setCallAccepted(prev => false);
+        mySocket.emit("reject-call", { to: callerInfo, name: userInfo.name });
+    };
+
     useEffect(() => {
         if (mySocket && userInfo) {
             //heartbeat already emitted
@@ -80,6 +86,10 @@ const VideoCallScreen = () => {
                 console.log("Incoming call from another user : ", data);
                 setReceivingCall(prev => true);
                 setCallerInfo(prev => data);
+            });
+
+            mySocket.on("callRejected", ({ name }) => {
+                toast.info(`Call rejected  by ${name}`);
             });
         }
     }, [mySocket]);
@@ -142,7 +152,10 @@ const VideoCallScreen = () => {
                             </Row>
 
                             {receivingCall && !callAccepted && (
-                                <Calling callerName={callerInfo?.name} />
+                                <Calling
+                                    rejectCall={handleRejectCall}
+                                    callerName={callerInfo?.name}
+                                />
                             )}
                         </>
                     )}

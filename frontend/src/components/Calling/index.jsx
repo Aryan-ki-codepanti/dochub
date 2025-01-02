@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 
-const Calling = ({ callerName }) => {
+const Calling = ({ callerName, rejectCall }) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(prev => false);
     const handleOpen = () => setShow(prev => true);
@@ -24,7 +24,7 @@ const Calling = ({ callerName }) => {
                 <Button variant="success" onClick={handleClose}>
                     Answer
                 </Button>
-                <Button variant="danger" onClick={handleClose}>
+                <Button variant="danger" onClick={rejectCall}>
                     Reject
                 </Button>
             </Modal.Footer>

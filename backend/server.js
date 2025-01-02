@@ -102,6 +102,11 @@ io.on("connection", socket => {
         }
     });
 
+    socket.on("reject-call", ({ to, name }) => {
+        // to has same as above {signal,from,name}
+        io.to(to.from).emit("callRejected", { name });
+    });
+
     socket.on("disconnect", () => {
         activeUsers.delete(socketToUser.get(socket.id));
         socketToUser.delete(socket.id);
