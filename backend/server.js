@@ -11,7 +11,7 @@ import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import fileRoutes from "./routes/fileRoutes.js";
 import { Server } from "socket.io";
-import { deleteMapEntryByValue } from "./utils/mapUtils.js";
+import { deleteMapEntryByValue, reverseLookup } from "./utils/mapUtils.js";
 
 const port = process.env.PORT || 5000;
 
@@ -84,6 +84,21 @@ io.on("connection", socket => {
 
             // emit my id
             socket.emit("my-sock-id", socket.id);
+        }
+    });
+
+    //vc
+    socket.on("callToFriend", data => {
+        console.log("Incoming call from ", data.from, " ", data.name);
+        const friendSocket = reverseLookup(socketToUser, data.callToFriendId);
+        if (friendSocket) {
+            console.log("sending call to ", data.callToFriendId);
+            console.log("friend Socket", friendSocket);
+            io.to(friendSocket).emit("callToFriend", {
+                signal: data.signalData,
+                from: data.from,
+                name: data.name
+            });
         }
     });
 

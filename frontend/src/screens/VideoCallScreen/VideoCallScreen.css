@@ -1,3 +1,20 @@
 #my-video {
     object-fit: cover;
 }
+
+.friendItem.offline:hover {
+    cursor: not-allowed;
+}
+
+.friendItem.online:hover {
+    cursor: pointer;
+    background: #e8e8e8 !important;
+}
+
+.friendItem.online .vidIcon {
+    background: #14a44d;
+}
+
+.friendItem.offline .vidIcon {
+    background: #dc4c64;
+}
