@@ -37,7 +37,7 @@ const App = () => {
 
     return (
         <>
-            <Header socket={socket} />
+            <Header />
             <ToastContainer />
             <Container className="my-2">
                 <Outlet />

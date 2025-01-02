@@ -15,8 +15,8 @@ import "./Header.css";
 import maleAvatar from "../../assets/male.png";
 import femaleAvatar from "../../assets/female.png";
 
-const Header = ({ socket }) => {
-    const { userInfo } = useSelector(state => state.auth);
+const Header = () => {
+    const { userInfo, mySocket } = useSelector(state => state.auth);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -26,10 +26,10 @@ const Header = ({ socket }) => {
     const logoutHandler = async () => {
         try {
             await logoutApiCall().unwrap();
-            if (socket) {
+            if (mySocket) {
                 // remove user from active
-                socket.off("disconnect");
-                socket.disconnect();
+                mySocket.off("disconnect");
+                mySocket.disconnect();
             }
             dispatch(logout());
             navigate("/login");

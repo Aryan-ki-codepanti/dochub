@@ -212,7 +212,7 @@ const VideoCallScreen = () => {
                         <>
                             <h2 className="text-center  mb-3">Who to Call?</h2>
                             <Row className="gap-2">
-                                {userInfo?.friendsInfo.map(f => (
+                                {userInfo?.friendsInfo?.map(f => (
                                     <div
                                         onClick={e => callToFriend(f.user)}
                                         key={f.user._id}
