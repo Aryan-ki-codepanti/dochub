@@ -110,6 +110,21 @@ const VideoCallScreen = () => {
         connectionRef.current = peer;
     };
 
+    const leaveCall = () => {
+        setReceivingCall(prev => false);
+        setCallAccepted(prev => false);
+        setCallEnded(prev => false);
+        setFriendToCall(prev => null);
+
+        connectionRef.current.destroy();
+        if (friendVideo.current) friendVideo.current.srcObject = null;
+
+        mySocket.emit("call-ended", {
+            to: callerInfo.from,
+            name: userInfo.name
+        });
+    };
+
     useEffect(() => {
         if (mySocket && userInfo) {
             //heartbeat already emitted
@@ -147,8 +162,15 @@ const VideoCallScreen = () => {
                 connectionRef.current.destroy();
                 if (friendVideo.current) friendVideo.current.srcObject = null;
             });
+
+            mySocket.on("disconnectUser", ({ disUser }) => {
+                console.log(`Caller ${callerInfo?.from}`);
+                console.log(`Disconnected user sock id ${disUser}`);
+
+                if (callerInfo?.from === disUser) leaveCall();
+            });
         }
-    }, [mySocket]);
+    }, [mySocket, callerInfo]);
 
     const fetchMyFriends = async () => {
         try {
@@ -162,21 +184,6 @@ const VideoCallScreen = () => {
     useEffect(() => {
         fetchMyFriends();
     }, []);
-
-    const leaveCall = () => {
-        setReceivingCall(prev => false);
-        setCallAccepted(prev => false);
-        setCallEnded(prev => false);
-        setFriendToCall(prev => null);
-
-        connectionRef.current.destroy();
-        if (friendVideo.current) friendVideo.current.srcObject = null;
-
-        mySocket.emit("call-ended", {
-            to: callerInfo.from,
-            name: userInfo.name
-        });
-    };
 
     return (
         <div className="mt-5" style={{ fontFamily: "Work Sans" }}>
