@@ -182,7 +182,7 @@ const VideoCallScreen = () => {
                 if (callerInfo?.from === disUser) leaveCall();
             });
         }
-    }, [mySocket, callerInfo]);
+    }, [mySocket]); // callerInfo
 
     const fetchMyFriends = async () => {
         try {
