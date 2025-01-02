@@ -112,9 +112,17 @@ io.on("connection", socket => {
         io.to(to).emit("callAccepted", { signal, from });
     });
 
+    socket.on("call-ended", ({ to, name }) => {
+        io.to(to).emit("callEnded", { name });
+    });
+
     socket.on("disconnect", () => {
         activeUsers.delete(socketToUser.get(socket.id));
         socketToUser.delete(socket.id);
+
+        // close vc
+        socket.broadcast.emit("disconnectUser", { disUser: socket.id });
+
         io.emit("update-active-users", Array.from(activeUsers));
 
         // console.log("disconnect user socket -> ", socket.id);

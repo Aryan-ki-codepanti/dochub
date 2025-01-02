@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Row } from "react-bootstrap";
+import { Button, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 
 import "./VideoCallScreen.css";
@@ -31,6 +31,8 @@ const VideoCallScreen = () => {
     const [receivingCall, setReceivingCall] = useState(false);
     const [callAccepted, setCallAccepted] = useState(false);
     const [callerInfo, setCallerInfo] = useState(null);
+
+    const [callEnded, setCallEnded] = useState(false);
 
     const callToFriend = friend => {
         // dont call if user is offline
@@ -134,6 +136,17 @@ const VideoCallScreen = () => {
             mySocket.on("callRejected", ({ name }) => {
                 toast.info(`Call rejected  by ${name}`);
             });
+
+            mySocket.on("callEnded", ({ name }) => {
+                toast.success(`Call ended with ${name}`);
+                setReceivingCall(prev => false);
+                setCallAccepted(prev => false);
+                setCallEnded(prev => false);
+                setFriendToCall(prev => null);
+
+                connectionRef.current.destroy();
+                if (friendVideo.current) friendVideo.current.srcObject = null;
+            });
         }
     }, [mySocket]);
 
@@ -149,6 +162,21 @@ const VideoCallScreen = () => {
     useEffect(() => {
         fetchMyFriends();
     }, []);
+
+    const leaveCall = () => {
+        setReceivingCall(prev => false);
+        setCallAccepted(prev => false);
+        setCallEnded(prev => false);
+        setFriendToCall(prev => null);
+
+        connectionRef.current.destroy();
+        if (friendVideo.current) friendVideo.current.srcObject = null;
+
+        mySocket.emit("call-ended", {
+            to: callerInfo.from,
+            name: userInfo.name
+        });
+    };
 
     return (
         <div className="mt-5" style={{ fontFamily: "Work Sans" }}>
@@ -211,6 +239,17 @@ const VideoCallScreen = () => {
                                     answerCall={handleAnswerCall}
                                     callerName={callerInfo?.name}
                                 />
+                            )}
+
+                            {callAccepted && !callEnded && (
+                                <div>
+                                    <Button
+                                        variant="danger"
+                                        onClick={leaveCall}
+                                    >
+                                        End Call
+                                    </Button>
+                                </div>
                             )}
                         </>
                     )}
