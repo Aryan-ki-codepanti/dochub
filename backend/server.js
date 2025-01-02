@@ -95,6 +95,7 @@ io.on("connection", socket => {
         // console.log("map", socketToUser);
     });
 
+    // real time chats
     socket.on("setup", userData => {
         //create a room
         socket.join(userData._id);
@@ -124,5 +125,10 @@ io.on("connection", socket => {
     socket.off("setup", userData => {
         console.log("USER Disconnected");
         socket.leave(userData._id);
+    });
+
+    // video calling
+    socket.on("join-vc", data => {
+        console.log("joined vc", data);
     });
 });

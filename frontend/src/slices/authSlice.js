@@ -8,7 +8,8 @@ const initialState = {
         selectedChat: null,
         chats: []
     },
-    activeUsers: []
+    activeUsers: [],
+    mySocket: null
 };
 
 const authSlice = createSlice({
@@ -28,11 +29,19 @@ const authSlice = createSlice({
         logout: (state, action) => {
             state.userInfo = null;
             localStorage.removeItem("userInfo");
+        },
+        setMySocket: (state, action) => {
+            state.mySocket = action.payload;
         }
     }
 });
 
-export const { setCredentials, logout, setChatInfo, setActiveUsers } =
-    authSlice.actions;
+export const {
+    setCredentials,
+    logout,
+    setChatInfo,
+    setActiveUsers,
+    setMySocket
+} = authSlice.actions;
 
 export default authSlice.reducer;

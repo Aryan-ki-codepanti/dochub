@@ -7,7 +7,7 @@ import Header from "./components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { useEffect } from "react";
-import { setActiveUsers } from "./slices/authSlice";
+import { setActiveUsers, setMySocket } from "./slices/authSlice";
 
 let socket;
 const App = () => {
@@ -16,6 +16,7 @@ const App = () => {
 
     useEffect(() => {
         socket = io(import.meta.env.VITE_APP_BACKEND_URL);
+        dispatch(setMySocket(socket));
         if (userInfo?._id) socket.emit("heartbeat", userInfo._id);
         return () => {
             socket.disconnect();
