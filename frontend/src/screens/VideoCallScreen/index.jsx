@@ -20,13 +20,14 @@ const VideoCallScreen = () => {
     const dispatch = useDispatch();
 
     const myVideo = useRef();
+    const friendVideo = useRef();
+
     const [myStream, setMyStream] = useState(null);
     const [mySockId, setMySockId] = useState(null);
     const [friendToCall, setFriendToCall] = useState(null);
 
     const connectionRef = useRef(); // current user peer connection ref
 
-    // caller info
     const [receivingCall, setReceivingCall] = useState(false);
     const [callAccepted, setCallAccepted] = useState(false);
     const [callerInfo, setCallerInfo] = useState(null);
@@ -56,6 +57,18 @@ const VideoCallScreen = () => {
             });
         });
 
+        peer.on("stream", stream => {
+            friendVideo.current.srcObject = stream;
+        });
+
+        // accept call
+        mySocket.once("callAccepted", ({ signal, from }) => {
+            console.log("Call Accepted running");
+            setCallAccepted(prev => true);
+            setCallerInfo(prev => (prev ? { ...prev, from } : { from }));
+            peer.signal(signal);
+        });
+
         connectionRef.current = peer;
     };
 
@@ -63,6 +76,36 @@ const VideoCallScreen = () => {
         setReceivingCall(prev => false);
         setCallAccepted(prev => false);
         mySocket.emit("reject-call", { to: callerInfo, name: userInfo.name });
+    };
+
+    const handleAnswerCall = () => {
+        setCallAccepted(prev => true);
+
+        const peer = new Peer({
+            initiator: false,
+            trickle: false,
+            stream: myStream
+        });
+
+        peer.on("signal", data => {
+            mySocket.emit("answerCall", {
+                signal: data,
+                to: callerInfo.from,
+                from: mySockId
+            });
+        });
+
+        peer.on("stream", stream => {
+            friendVideo.current.srcObject = stream;
+        });
+        console.log("caller signal", callerInfo.signal);
+
+        if (!callerInfo.signal) {
+            console.error("Callerinfo signal is undefined");
+            return;
+        }
+        peer.signal(callerInfo.signal);
+        connectionRef.current = peer;
     };
 
     useEffect(() => {
@@ -126,7 +169,10 @@ const VideoCallScreen = () => {
 
                 <div className="col-sm-6">
                     {friendToCall ? (
-                        <h2 className="text-center  mb-3">Friend</h2>
+                        <>
+                            <h2 className="text-center  mb-3">Friend</h2>
+                            {/* copy below video tag */}
+                        </>
                     ) : (
                         <>
                             <h2 className="text-center  mb-3">Who to Call?</h2>
@@ -151,9 +197,18 @@ const VideoCallScreen = () => {
                                 ))}
                             </Row>
 
+                            <video
+                                className="w-100"
+                                id="friend-video"
+                                ref={friendVideo}
+                                autoPlay
+                                muted
+                            ></video>
+
                             {receivingCall && !callAccepted && (
                                 <Calling
                                     rejectCall={handleRejectCall}
+                                    answerCall={handleAnswerCall}
                                     callerName={callerInfo?.name}
                                 />
                             )}

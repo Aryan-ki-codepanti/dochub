@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 
-const Calling = ({ callerName, rejectCall }) => {
+const Calling = ({ callerName, rejectCall, answerCall }) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(prev => false);
     const handleOpen = () => setShow(prev => true);
@@ -21,7 +21,7 @@ const Calling = ({ callerName, rejectCall }) => {
                 is calling you. Do you want to accept the call?
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="success" onClick={handleClose}>
+                <Button variant="success" onClick={answerCall}>
                     Answer
                 </Button>
                 <Button variant="danger" onClick={rejectCall}>

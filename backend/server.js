@@ -107,6 +107,11 @@ io.on("connection", socket => {
         io.to(to.from).emit("callRejected", { name });
     });
 
+    socket.on("answerCall", ({ signal, to, from }) => {
+        console.log(`Answering call from ${from} to ${to}`);
+        io.to(to).emit("callAccepted", { signal, from });
+    });
+
     socket.on("disconnect", () => {
         activeUsers.delete(socketToUser.get(socket.id));
         socketToUser.delete(socket.id);

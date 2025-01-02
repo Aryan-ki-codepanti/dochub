@@ -1,7 +1,7 @@
-#my-video {
+#my-video,
+#friend-video {
     object-fit: cover;
 }
-
 .friendItem.offline:hover {
     cursor: not-allowed;
 }
