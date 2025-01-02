@@ -69,7 +69,7 @@ let socketToUser = new Map();
 io.on("connection", socket => {
     console.log(`Connected to socket.io`);
 
-    // active status
+    // active status and video calling
     socket.on("heartbeat", userId => {
         if (userId) {
             activeUsers.add(userId);
@@ -81,6 +81,9 @@ io.on("connection", socket => {
             // console.log("map", socketToUser);
             // console.log(userId, "connect user socket -> ", socket.id);
             io.emit("update-active-users", Array.from(activeUsers));
+
+            // emit my id
+            socket.emit("my-sock-id", socket.id);
         }
     });
 
@@ -125,10 +128,5 @@ io.on("connection", socket => {
     socket.off("setup", userData => {
         console.log("USER Disconnected");
         socket.leave(userData._id);
-    });
-
-    // video calling
-    socket.on("join-vc", data => {
-        console.log("joined vc", data);
     });
 });

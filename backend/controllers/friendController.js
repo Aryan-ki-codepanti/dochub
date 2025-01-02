@@ -175,4 +175,23 @@ const updateFriendStatus = asyncHandler(async (req, res) => {
     }
 });
 
-export { getAllPeople, updateFriendStatus };
+// @desc    get my friends details
+// @route   GET /api/friends/my
+// @access  Private
+const getMyFriends = asyncHandler(async (req, res) => {
+    try {
+        const me = await User.findById(req.user._id).populate({
+            path: "friends.user",
+            select: "-password"
+        });
+        me.friends = me.friends.filter(friend => friend.status === 3);
+
+        return res.status(200).json(me.friends);
+    } catch (error) {
+        res.status(500).json({ message: "Unable to get friends", error });
+        console.log("getMyFriends  ERROR", error);
+        throw new Error("Some error while friends get");
+    }
+});
+
+export { getAllPeople, updateFriendStatus, getMyFriends };

@@ -21,6 +21,12 @@ export const friendApiSlice = apiSlice.injectEndpoints({
                 url: `${FRIENDS_URL}?search=${q}`,
                 method: "GET"
             })
+        }),
+        getMyFriends: builder.mutation({
+            query: () => ({
+                url: `${FRIENDS_URL}/my`,
+                method: "GET"
+            })
         })
     })
 });
@@ -28,5 +34,6 @@ export const friendApiSlice = apiSlice.injectEndpoints({
 export const {
     useGetAllPeopleMutation,
     useUpdateFriendStatusMutation,
-    useSearchFriendsMutation
+    useSearchFriendsMutation,
+    useGetMyFriendsMutation
 } = friendApiSlice;
