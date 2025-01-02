@@ -32,6 +32,8 @@ const VideoCallScreen = () => {
     const [callAccepted, setCallAccepted] = useState(false);
     const [callerInfo, setCallerInfo] = useState(null);
 
+    const [callActive, setCallActive] = useState(false);
+
     const [callEnded, setCallEnded] = useState(false);
 
     const callToFriend = friend => {
@@ -66,6 +68,7 @@ const VideoCallScreen = () => {
         // accept call
         mySocket.once("callAccepted", ({ signal, from }) => {
             console.log("Call Accepted running");
+            setCallActive(prev => true);
             setCallAccepted(prev => true);
             setCallerInfo(prev => (prev ? { ...prev, from } : { from }));
             peer.signal(signal);
@@ -77,11 +80,14 @@ const VideoCallScreen = () => {
     const handleRejectCall = () => {
         setReceivingCall(prev => false);
         setCallAccepted(prev => false);
+        setCallActive(prev => false);
+
         mySocket.emit("reject-call", { to: callerInfo, name: userInfo.name });
     };
 
     const handleAnswerCall = () => {
         setCallAccepted(prev => true);
+        setCallActive(prev => true);
 
         const peer = new Peer({
             initiator: false,
@@ -115,6 +121,8 @@ const VideoCallScreen = () => {
         setCallAccepted(prev => false);
         setCallEnded(prev => false);
         setFriendToCall(prev => null);
+
+        setCallActive(prev => false);
 
         connectionRef.current.destroy();
         if (friendVideo.current) friendVideo.current.srcObject = null;
@@ -150,6 +158,7 @@ const VideoCallScreen = () => {
 
             mySocket.on("callRejected", ({ name }) => {
                 toast.info(`Call rejected  by ${name}`);
+                setCallActive(prev => false);
             });
 
             mySocket.on("callEnded", ({ name }) => {
@@ -159,6 +168,8 @@ const VideoCallScreen = () => {
                 setCallEnded(prev => false);
                 setFriendToCall(prev => null);
 
+                setCallActive(prev => false);
+
                 connectionRef.current.destroy();
                 if (friendVideo.current) friendVideo.current.srcObject = null;
             });
@@ -166,6 +177,7 @@ const VideoCallScreen = () => {
             mySocket.on("disconnectUser", ({ disUser }) => {
                 console.log(`Caller ${callerInfo?.from}`);
                 console.log(`Disconnected user sock id ${disUser}`);
+                setCallActive(prev => false);
 
                 if (callerInfo?.from === disUser) leaveCall();
             });
@@ -203,13 +215,9 @@ const VideoCallScreen = () => {
                 </div>
 
                 <div className="col-sm-6">
-                    {friendToCall ? (
+                    {!callActive ? (
                         <>
-                            <h2 className="text-center  mb-3">Friend</h2>
                             {/* copy below video tag */}
-                        </>
-                    ) : (
-                        <>
                             <h2 className="text-center  mb-3">Who to Call?</h2>
                             <Row className="gap-2">
                                 {userInfo?.friendsInfo?.map(f => (
@@ -231,6 +239,10 @@ const VideoCallScreen = () => {
                                     </div>
                                 ))}
                             </Row>
+                        </>
+                    ) : (
+                        <>
+                            <h2 className="text-center  mb-3">Friend</h2>
 
                             <video
                                 className="w-100"
@@ -239,26 +251,22 @@ const VideoCallScreen = () => {
                                 autoPlay
                                 muted
                             ></video>
-
-                            {receivingCall && !callAccepted && (
-                                <Calling
-                                    rejectCall={handleRejectCall}
-                                    answerCall={handleAnswerCall}
-                                    callerName={callerInfo?.name}
-                                />
-                            )}
-
-                            {callAccepted && !callEnded && (
-                                <div>
-                                    <Button
-                                        variant="danger"
-                                        onClick={leaveCall}
-                                    >
-                                        End Call
-                                    </Button>
-                                </div>
-                            )}
                         </>
+                    )}
+                    {receivingCall && !callAccepted && (
+                        <Calling
+                            rejectCall={handleRejectCall}
+                            answerCall={handleAnswerCall}
+                            callerName={callerInfo?.name}
+                        />
+                    )}
+
+                    {callAccepted && !callEnded && (
+                        <div>
+                            <Button variant="danger" onClick={leaveCall}>
+                                End Call
+                            </Button>
+                        </div>
                     )}
                 </div>
             </Row>
