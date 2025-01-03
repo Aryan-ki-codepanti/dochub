@@ -42,7 +42,7 @@ const VideoCallScreen = () => {
             toast.warn(`${friend.name} is offline`);
             return;
         }
-        // setFriendToCall(prev => friend)
+        setFriendToCall(prev => friend);
         console.log("Call friend ", friend._id);
 
         const peer = new Peer({
@@ -71,6 +71,7 @@ const VideoCallScreen = () => {
             setCallActive(prev => true);
             setCallAccepted(prev => true);
             setCallerInfo(prev => (prev ? { ...prev, from } : { from }));
+            // setFriendToCall(prev => callerInfo);
             peer.signal(signal);
         });
 
@@ -81,6 +82,7 @@ const VideoCallScreen = () => {
         setReceivingCall(prev => false);
         setCallAccepted(prev => false);
         setCallActive(prev => false);
+        setFriendToCall(prev => null);
 
         mySocket.emit("reject-call", { to: callerInfo, name: userInfo.name });
     };
@@ -88,6 +90,7 @@ const VideoCallScreen = () => {
     const handleAnswerCall = () => {
         setCallAccepted(prev => true);
         setCallActive(prev => true);
+        setFriendToCall(prev => callerInfo);
 
         const peer = new Peer({
             initiator: false,
@@ -154,11 +157,13 @@ const VideoCallScreen = () => {
                 console.log("Incoming call from another user : ", data);
                 setReceivingCall(prev => true);
                 setCallerInfo(prev => data);
+                setFriendToCall(prev => callerInfo);
             });
 
             mySocket.on("callRejected", ({ name }) => {
                 toast.info(`Call rejected  by ${name}`);
                 setCallActive(prev => false);
+                setFriendToCall(prev => null);
             });
 
             mySocket.on("callEnded", ({ name }) => {
@@ -178,6 +183,7 @@ const VideoCallScreen = () => {
                 console.log(`Caller ${callerInfo?.from}`);
                 console.log(`Disconnected user sock id ${disUser}`);
                 setCallActive(prev => false);
+                setFriendToCall(prev => null);
 
                 if (callerInfo?.from === disUser) leaveCall();
             });
@@ -201,7 +207,7 @@ const VideoCallScreen = () => {
         <div className="mt-5" style={{ fontFamily: "Work Sans" }}>
             <Row className="">
                 <div className="col-sm-6">
-                    <h2 className="text-center mb-3">My Video</h2>
+                    <h2 className="text-center mb-3">You</h2>
                     <video
                         id="my-video"
                         className="w-100"
@@ -242,7 +248,9 @@ const VideoCallScreen = () => {
                         </>
                     ) : (
                         <>
-                            <h2 className="text-center  mb-3">Friend</h2>
+                            <h2 className="text-center  mb-3">
+                                {friendToCall?.name || "Friend"}
+                            </h2>
 
                             <video
                                 className="w-100"
