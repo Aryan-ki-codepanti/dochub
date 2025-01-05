@@ -1,12 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Row } from "react-bootstrap";
+import { Button, OverlayTrigger, Row, Tooltip } from "react-bootstrap";
 import { toast } from "react-toastify";
 
 import "./VideoCallScreen.css";
 import { useGetMyFriendsMutation } from "../../slices/friendsApiSlice";
 import { setCredentials } from "../../slices/authSlice";
-import { FaVideo } from "react-icons/fa";
+import {
+    FaMicrophone,
+    FaMicrophoneSlash,
+    FaVideo,
+    FaVideoSlash
+} from "react-icons/fa";
 // import Peer from "simple-peer";
 import Peer from "simple-peer/simplepeer.min.js";
 import Calling from "../../components/Calling";
@@ -25,6 +30,29 @@ const VideoCallScreen = () => {
     const [myStream, setMyStream] = useState(null);
     const [mySockId, setMySockId] = useState(null);
     const [friendToCall, setFriendToCall] = useState(null);
+
+    const [isMuted, setIsMuted] = useState(false);
+    const [isCameraOff, setIsCameraOff] = useState(false);
+
+    const toggleMute = () => {
+        if (myStream) {
+            const audioTrack = myStream.getAudioTracks()[0];
+            if (audioTrack) {
+                audioTrack.enabled = !audioTrack.enabled;
+                setIsMuted(!audioTrack.enabled);
+            }
+        }
+    };
+
+    const toggleCamera = () => {
+        if (myStream) {
+            const videoTrack = myStream.getVideoTracks()[0];
+            if (videoTrack) {
+                videoTrack.enabled = !videoTrack.enabled;
+                setIsCameraOff(!videoTrack.enabled);
+            }
+        }
+    };
 
     const connectionRef = useRef(); // current user peer connection ref
 
@@ -210,7 +238,7 @@ const VideoCallScreen = () => {
                     <h2 className="text-center mb-3">You</h2>
                     <video
                         id="my-video"
-                        className="w-100"
+                        className={`w-100 ${isCameraOff ? "camera-off" : ""}`}
                         ref={myVideo => {
                             if (myVideo && myStream)
                                 myVideo.srcObject = myStream;
@@ -218,6 +246,55 @@ const VideoCallScreen = () => {
                         autoPlay
                         muted
                     ></video>
+                    <div className="d-flex justify-content-center align-items-center gap-3 mt-3">
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip id={`tooltip-bottom`}>
+                                    {isMuted
+                                        ? "Turn on Microphone"
+                                        : "Turn off Microphone"}
+                                </Tooltip>
+                            }
+                        >
+                            <Button
+                                variant={isMuted ? "danger" : "secondary"}
+                                onClick={toggleMute}
+                                className="rounded-circle p-3"
+                                style={{ width: "58px", aspectRatio: "1" }}
+                            >
+                                {isMuted ? (
+                                    <FaMicrophoneSlash size={20} />
+                                ) : (
+                                    <FaMicrophone size={18} />
+                                )}
+                            </Button>
+                        </OverlayTrigger>
+
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip id={`tooltip-bottom`}>
+                                    {isCameraOff
+                                        ? "Turn on Camera"
+                                        : "Turn off Camera"}
+                                </Tooltip>
+                            }
+                        >
+                            <Button
+                                variant={isCameraOff ? "danger" : "secondary"}
+                                onClick={toggleCamera}
+                                className="rounded-circle p-3"
+                                style={{ width: "58px", aspectRatio: "1" }}
+                            >
+                                {isCameraOff ? (
+                                    <FaVideoSlash size={20} />
+                                ) : (
+                                    <FaVideo size={18} />
+                                )}
+                            </Button>
+                        </OverlayTrigger>
+                    </div>
                 </div>
 
                 <div className="col-sm-6">
