@@ -6,7 +6,10 @@ const SharedFileBox = ({
     sharedFilesInfo,
     handleDownload,
     handleView,
-    handleDelete
+    handleDelete,
+    downloadLoading,
+    viewLoading,
+    deleteLoading
 }) => {
     const [groupFilter, setGroupFilter] = useState("none");
     const [currentGroupFiles, setCurrentGroupFiles] = useState([]);
@@ -95,6 +98,9 @@ const SharedFileBox = ({
                                     handleDownload={handleDownload}
                                     handleView={handleView}
                                     handleDelete={handleDelete}
+                                    downloadLoading={downloadLoading}
+                                    viewLoading={viewLoading}
+                                    deleteLoading={deleteLoading}
                                 />
                             ))}
                         </div>

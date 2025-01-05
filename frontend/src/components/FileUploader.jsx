@@ -7,6 +7,7 @@ import {
     useUploadFilesMutation,
     useUploadToDriveFilesMutation
 } from "../slices/filesApiSlice";
+import Loader from "./Loader";
 
 const FileUploader = ({ allGroups, fetchMyFiles, fetchGroupDirs }) => {
     const [files, setFiles] = useState([]);
@@ -168,7 +169,14 @@ const FileUploader = ({ allGroups, fetchMyFiles, fetchGroupDirs }) => {
                         variant="success"
                         disabled={uploading}
                     >
-                        {uploading ? "Uploading..." : "Upload Files"}
+                        {uploading ? (
+                            <div className="d-flex gap-2">
+                                <Loader size="20px" />
+                                Uploading...
+                            </div>
+                        ) : (
+                            "Upload Files"
+                        )}
                     </Button>
                 </div>
             )}

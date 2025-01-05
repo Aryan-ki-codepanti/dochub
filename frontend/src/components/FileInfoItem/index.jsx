@@ -14,6 +14,7 @@ import Avatar from "../Misc/Avatar";
 import maleAvatar from "../../assets/male.png";
 import femaleAvatar from "../../assets/female.png";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import Loader from "../Loader";
 
 const FileInfoItem = ({
     file,
@@ -22,7 +23,10 @@ const FileInfoItem = ({
     onMouseLeave,
     handleDownload,
     handleView,
-    handleDelete
+    handleDelete,
+    downloadLoading,
+    viewLoading,
+    deleteLoading
 }) => {
     const imgRegex = /^image\/.+$/;
     function formatDate(date) {
@@ -58,38 +62,50 @@ const FileInfoItem = ({
             </div>
             {currentMyFileInfo === file && (
                 <div className="d-flex align-items-center gap-2 gap-md-3 mx-3">
-                    <FaBookReader
-                        onClick={e =>
-                            handleView({
-                                fileInfo: file,
-                                groupId: file?.groupId?._id
-                            })
-                        }
-                        cursor="pointer"
-                        size={20}
-                    />
-                    <IoDownload
-                        onClick={e =>
-                            handleDownload({
-                                fileInfo: file,
-                                groupId: file?.groupId?._id
-                            })
-                        }
-                        cursor="pointer"
-                        size={20}
-                    />
-                    <img
-                        onClick={e =>
-                            handleDelete({
-                                fileInfo: file,
-                                groupId: file?.groupId?._id
-                            })
-                        }
-                        width={20}
-                        style={{ cursor: "pointer" }}
-                        src={binSVG}
-                        alt="bin"
-                    />
+                    {viewLoading ? (
+                        <Loader size={"20px"} />
+                    ) : (
+                        <FaBookReader
+                            onClick={e =>
+                                handleView({
+                                    fileInfo: file,
+                                    groupId: file?.groupId?._id
+                                })
+                            }
+                            cursor="pointer"
+                            size={20}
+                        />
+                    )}
+                    {downloadLoading ? (
+                        <Loader size={"20px"} />
+                    ) : (
+                        <IoDownload
+                            onClick={e =>
+                                handleDownload({
+                                    fileInfo: file,
+                                    groupId: file?.groupId?._id
+                                })
+                            }
+                            cursor="pointer"
+                            size={20}
+                        />
+                    )}
+                    {deleteLoading ? (
+                        <Loader size={"20px"} />
+                    ) : (
+                        <img
+                            onClick={e =>
+                                handleDelete({
+                                    fileInfo: file,
+                                    groupId: file?.groupId?._id
+                                })
+                            }
+                            width={20}
+                            style={{ cursor: "pointer" }}
+                            src={binSVG}
+                            alt="bin"
+                        />
+                    )}
                 </div>
             )}
             <div className="d-flex gap-4 position-relative">

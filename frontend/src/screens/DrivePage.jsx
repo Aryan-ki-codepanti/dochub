@@ -38,6 +38,10 @@ const DrivePage = () => {
     const [downloadFileFromDriveAPI] = useDownloadFileFromDriveMutation();
     const [viewFileFromDriveAPI] = useViewFileFromDriveMutation();
 
+    const [deleteLoading, setDeleteLoading] = useState(false);
+    const [downloadLoading, setDownloadLoading] = useState(false);
+    const [viewLoading, setViewLoading] = useState(false);
+
     // group directory for upload and shared files
     const [allGroups, setAllGroups] = useState([]);
     const [sharedFilesInfo, setSharedFilesInfo] = useState([]);
@@ -45,6 +49,8 @@ const DrivePage = () => {
     const handleDownload = async data => {
         try {
             // const fileBlob = await downloadFileAPI(data).unwrap();
+            setDownloadLoading(prev => true);
+
             const fileBlob = await downloadFileFromDriveAPI(data).unwrap();
             const url = window.URL.createObjectURL(fileBlob);
             const link = document.createElement("a");
@@ -56,23 +62,30 @@ const DrivePage = () => {
         } catch (error) {
             console.error("Error downloading file:", error);
             toast.error("Error downloading file");
+        } finally {
+            setDownloadLoading(prev => false);
         }
     };
     const handleView = async data => {
         try {
             // const fileBlob = await viewFileAPI(data).unwrap();
+            setViewLoading(prev => true);
+
             const fileBlob = await viewFileFromDriveAPI(data).unwrap();
             const url = window.URL.createObjectURL(fileBlob);
             window.open(url, "_blank");
         } catch (error) {
             console.log("Error in viewing file", error);
             toast.error("Error in viewing file");
+        } finally {
+            setViewLoading(prev => false);
         }
     };
 
     const handleDelete = async data => {
         try {
             // const resp = await deleteFileAPI(data).unwrap();
+            setDeleteLoading(prev => true);
             const resp = await deleteFileFromDriveAPI(data).unwrap();
 
             if (!resp.success) throw new Error("Error in deleting file");
@@ -83,6 +96,8 @@ const DrivePage = () => {
         } catch (error) {
             toast.error("Error in deleting file");
             console.log("Error in deleting file", error);
+        } finally {
+            setDeleteLoading(prev => false);
         }
     };
 
@@ -239,6 +254,15 @@ const DrivePage = () => {
                                                         handleDelete={
                                                             handleDelete
                                                         }
+                                                        downloadLoading={
+                                                            downloadLoading
+                                                        }
+                                                        viewLoading={
+                                                            viewLoading
+                                                        }
+                                                        deleteLoading={
+                                                            deleteLoading
+                                                        }
                                                     />
                                                 ))}
                                             </div>
@@ -264,6 +288,9 @@ const DrivePage = () => {
                                             handleDownload={handleDownload}
                                             handleView={handleView}
                                             handleDelete={handleDelete}
+                                            downloadLoading={downloadLoading}
+                                            viewLoading={viewLoading}
+                                            deleteLoading={deleteLoading}
                                         />
                                     ) : (
                                         <div>
