@@ -72,7 +72,7 @@ const FileInfoItem = ({
                                     groupId: file?.groupId?._id
                                 })
                             }
-                            cursor="pointer"
+                            style={{ cursor: "pointer" }}
                             size={20}
                         />
                     )}
@@ -86,7 +86,7 @@ const FileInfoItem = ({
                                     groupId: file?.groupId?._id
                                 })
                             }
-                            cursor="pointer"
+                            style={{ cursor: "pointer" }}
                             size={20}
                         />
                     )}

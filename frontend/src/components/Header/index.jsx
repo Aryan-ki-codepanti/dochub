@@ -14,6 +14,7 @@ import "./Header.css";
 
 import maleAvatar from "../../assets/male.png";
 import femaleAvatar from "../../assets/female.png";
+import { toast } from "react-toastify";
 
 const Header = () => {
     const { userInfo, mySocket } = useSelector(state => state.auth);
@@ -32,6 +33,7 @@ const Header = () => {
                 mySocket.disconnect();
             }
             dispatch(logout());
+            toast.success("Logged out successfully 😌");
             navigate("/login");
         } catch (err) {
             console.error(err);
