@@ -346,7 +346,7 @@ const VideoCallScreen = () => {
                         />
                     )}
 
-                    {callAccepted && !callEnded && (
+                    {callAccepted && !callEnded && callActive && (
                         <div>
                             <Button variant="danger" onClick={leaveCall}>
                                 End Call
