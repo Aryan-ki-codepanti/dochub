@@ -270,6 +270,7 @@ const Users = ({ users, peopleFilter }) => {
                                                         ? maleAvatar
                                                         : femaleAvatar)
                                                 }
+                                                name={user.name}
                                             />
                                             {activeUsers.includes(user._id) && (
                                                 <span className="active-status" />
@@ -323,7 +324,7 @@ const Users = ({ users, peopleFilter }) => {
                                         className=""
                                         width={400}
                                         src={noResultsFound}
-                                        alt="404-Not-found"
+                                        alt="404-not-found"
                                     />
                                     <span className="text-info fs-1">
                                         No results found
@@ -410,6 +411,7 @@ const Users = ({ users, peopleFilter }) => {
                                                         ? maleAvatar
                                                         : femaleAvatar)
                                                 }
+                                                name={user.name}
                                             />
                                             {activeUsers.includes(user._id) && (
                                                 <span className="active-status" />

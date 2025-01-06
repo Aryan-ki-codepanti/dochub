@@ -30,7 +30,7 @@ const Avatar = ({
                     src={src}
                     roundedCircle
                     className="avatar-img"
-                    alt={name}
+                    alt={name || "someone"}
                     style={{
                         width: "100%",
                         height: "100%",
