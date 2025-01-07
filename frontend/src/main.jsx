@@ -19,6 +19,7 @@ import PrivateRoute from "./components/PrivateRoute.jsx";
 import ChatPage from "./screens/ChatPage.jsx";
 import DrivePage from "./screens/DrivePage.jsx";
 import VideoCallScreen from "./screens/VideoCallScreen";
+import DashboardScreen from "./screens/DashboardScreen";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -31,6 +32,7 @@ const router = createBrowserRouter(
                 <Route path="/chats" element={<ChatPage />} />
                 <Route path="/drive" element={<DrivePage />} />
                 <Route path="/video-call" element={<VideoCallScreen />} />
+                <Route path="/dashboard" element={<DashboardScreen />} />
             </Route>
         </Route>
     )

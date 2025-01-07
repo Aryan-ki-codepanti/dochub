@@ -1,6 +1,11 @@
 // import { Navbar, Nav, Container, NavDropdown, Badge } from 'react-bootstrap';
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
-import { FaSignInAlt, FaSignOutAlt, FaRocketchat } from "react-icons/fa";
+import {
+    FaSignInAlt,
+    FaSignOutAlt,
+    FaRocketchat,
+    FaChartBar
+} from "react-icons/fa";
 import { GrStorage, GrVideo } from "react-icons/gr";
 
 import { LinkContainer } from "react-router-bootstrap";
@@ -52,6 +57,12 @@ const Header = () => {
                         <Nav className="ms-auto">
                             {userInfo ? (
                                 <>
+                                    <LinkContainer to="/dashboard">
+                                        <Nav.Link className="d-flex align-items-center gap-2 drive-icon">
+                                            <FaChartBar size={20} />
+                                            Dashboard
+                                        </Nav.Link>
+                                    </LinkContainer>
                                     <LinkContainer to="/video-call">
                                         <Nav.Link className="d-flex align-items-center gap-2 drive-icon">
                                             <GrVideo size={20} />
