@@ -212,14 +212,14 @@ const DashboardScreen = () => {
             <Row>
                 <Col sm={12} md={8}>
                     <Row>
-                        <Col sm={6} md={4} className="py-3">
+                        <Col sm={6} md={6} className="py-3">
                             <DashboardCard
                                 number={friendsCount}
                                 Icon={FaUserFriends}
                                 description="Friends"
                             />
                         </Col>
-                        <Col sm={6} md={4} className="py-3">
+                        <Col sm={6} md={6} className="py-3">
                             <DashboardCard
                                 number={chatCount}
                                 Icon={IoMdChatboxes}
@@ -227,7 +227,7 @@ const DashboardScreen = () => {
                             />
                         </Col>
 
-                        <Col sm={6} md={4} className="py-3">
+                        <Col sm={6} md={6} className="py-3">
                             <DashboardCard
                                 number={messagesCount}
                                 Icon={FaEnvelope}
@@ -235,7 +235,7 @@ const DashboardScreen = () => {
                             />
                         </Col>
 
-                        <Col sm={6} md={4} className="py-3">
+                        <Col sm={6} md={6} className="py-3">
                             <DashboardCard
                                 number={
                                     myChats.length
@@ -248,7 +248,7 @@ const DashboardScreen = () => {
                                 description="Average Messages Per Chat"
                             />
                         </Col>
-                        <Col sm={6} md={4} className="py-3">
+                        <Col sm={6} md={6} className="py-3">
                             <DashboardCard
                                 number={favouriteGroupMsgCount}
                                 Icon={IoIosChatbubbles}
@@ -259,7 +259,7 @@ const DashboardScreen = () => {
                                 }
                             />
                         </Col>
-                        <Col sm={6} md={4} className="py-3">
+                        <Col sm={6} md={6} className="py-3">
                             <DashboardCard
                                 number={favouriteFriendMsgCount}
                                 Icon={IoIosChatbubbles}
@@ -270,14 +270,14 @@ const DashboardScreen = () => {
                                 }
                             />
                         </Col>
-                        <Col sm={6} md={4} className="py-3">
+                        <Col sm={6} md={6} className="py-3">
                             <DashboardCard
                                 number={myFilesCount}
                                 Icon={FaFileAlt}
                                 description="Personal Files stored"
                             />
                         </Col>
-                        <Col sm={6} md={4} className="py-3">
+                        <Col sm={6} md={6} className="py-3">
                             <DashboardCard
                                 number={avgFileSize}
                                 Icon={FaFileInvoice}
@@ -287,16 +287,25 @@ const DashboardScreen = () => {
                     </Row>
                 </Col>
                 <Col className="d-flex flex-column align-items-center justify-content-center">
-                    <LineChart data={linePlotData} />
-                    <h5 className="text-primary text-center">Frequency</h5>
-                    <Row className="w-100">
-                        <Col>
-                            <hr className="border-secondary" />
-                        </Col>
-                    </Row>
+                    <div className="dashboard-card card shadow-sm">
+                        <h5
+                            style={{ marginBlock: "10px -10px" }}
+                            className="text-center"
+                        >
+                            Frequency
+                        </h5>
+                        <LineChart data={linePlotData} />
+                    </div>
 
-                    <PieChart pieData={fileTypePieData} />
-                    <h5 className="text-primary text-center">File Type</h5>
+                    <div className="dashboard-card card shadow-sm mt-2">
+                        <h5
+                            style={{ marginBlock: "10px -5px" }}
+                            className="text-center"
+                        >
+                            File Type
+                        </h5>
+                        <PieChart pieData={fileTypePieData} />
+                    </div>
                 </Col>
             </Row>
         </Container>
