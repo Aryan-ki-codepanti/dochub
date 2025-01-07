@@ -50,6 +50,12 @@ cd dochub
     MONGO_URI=your_mongo_database_uri
     JWT_SECRET=your_jwt_secret
     REACT_APP_PORT=yourReactAppPort
+
+    <!-- Addtional VARIABLES TO INCLUDE ARE (obtained from google cloud console) -->
+    GOOGLE_CLIENT_ID=<GOOGLE_OAUTH2_CLIENT_ID>
+    GOOGLE_CLIENT_SECRET=<YOUR_GOOGLE_OAUTH2_CLIENT_SECRET>
+    GOOGLE_DOCHUB_FOLDER_NAME=<YOUR_GOOGLE_DRIVE_FOLDER_NAME>
+    GOOGLE_REFRESH_TOKEN=<YOUR_GOOGLE_API_REFRESH_TOKEN>
     ```
 
 3. Start the server:
@@ -97,8 +103,8 @@ cd dochub
 
 ### Installations
 
--   **Backend Dependencies**: Express, Mongoose, dotenv, bcryptjs, jsonwebtoken, etc.
--   **Frontend Dependencies**: React, Axios, React Router, Redux Toolkit , bootstrap etc., etc.
+-   **Backend Dependencies**: Express, Mongoose, dotenv, bcryptjs, jsonwebtoken, filesize, google etc.
+-   **Frontend Dependencies**: React, Axios, React Router, Redux Toolkit , bootstrap , react-fa-icons,react-chart-js chart.js etc.
 
 ### Running in Production
 
