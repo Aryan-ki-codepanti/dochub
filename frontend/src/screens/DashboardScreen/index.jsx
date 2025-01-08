@@ -28,7 +28,6 @@ import { toast } from "react-toastify";
 import { getSender } from "../../config/chatLogics";
 import { useGetFilesInfoMutation } from "../../slices/filesApiSlice";
 import { filesize } from "filesize";
-import { Line } from "react-chartjs-2";
 import LineChart from "../../components/LineChart";
 import PieChart from "../../components/PieChart";
 
@@ -61,7 +60,6 @@ const DashboardScreen = () => {
     const { userInfo, chatInfo } = useSelector(state => state.auth);
 
     const [myChats, setMyChats] = useState([]);
-    const [myMessages, setMyMessages] = useState(null);
 
     const [fetchChats] = useFetchChatsMutation();
     const [allMessages] = useAllMessagesMutation();
@@ -77,6 +75,11 @@ const DashboardScreen = () => {
     const [favouriteFriend, setFavouriteFriend] = useState("NONE");
     const [favouriteFriendMsgCount, setFavouriteFriendMsgCount] = useState(0);
 
+    // loading
+    const [chatLoading, setChatLoading] = useState(false);
+    const [fileLoading, setFileLoading] = useState(false);
+    const [messageLoading, setMessageLoading] = useState(false);
+
     const [myFilesCount, setMyFilesCount] = useState(0);
     const [avgFileSize, setAvgFileSize] = useState(0);
     const [plotData, setPlotData] = useState(initialPlotData);
@@ -88,6 +91,8 @@ const DashboardScreen = () => {
     );
 
     const fetchMessagesForChats = async () => {
+        setMessageLoading(prev => true);
+
         let chatIds = myChats.map(x => x._id);
         try {
             const fetchPromises = chatIds.map(chatId =>
@@ -151,44 +156,63 @@ const DashboardScreen = () => {
         } catch (err) {
             console.error("Error fetching messages:", err.message);
             toast.error("Error fetching messages");
+        } finally {
+            setMessageLoading(prev => false);
         }
     };
 
     const fetchFileData = async () => {
-        const data = await getFilesInfoAPI().unwrap();
-        console.log("file", data);
-        setMyFilesCount(prev => data.length);
-        let s = Math.floor(
-            data.reduce((acc, f) => acc + f.size, 0) / data.length
-        );
-        setAvgFileSize(prev => filesize(s));
-        const fileMap = getPlotFileData(data);
+        setFileLoading(prev => true);
 
-        const newFilePlotData = structuredClone(initialPlotData);
-        newFilePlotData.labels = Object.keys(fileMap);
-        newFilePlotData.datasets[0].data = Object.values(fileMap);
-        newFilePlotData.datasets[0].label = "Files Uploaded";
-        newFilePlotData.datasets[0].backgroundColor = "#f26b5a";
-        newFilePlotData.datasets[0].borderColor = "#d8b7bc";
-        setPlotFileData(prev => newFilePlotData);
+        try {
+            const data = await getFilesInfoAPI().unwrap();
+            setMyFilesCount(prev => data.length);
+            let s = Math.floor(
+                data.reduce((acc, f) => acc + f.size, 0) / data.length
+            );
+            setAvgFileSize(prev => filesize(s));
+            const fileMap = getPlotFileData(data);
 
-        const pieD = getPiePlotFileData(data);
-        const newPie = structuredClone(fileTypePieInitialData);
-        newPie.labels = Object.keys(pieD);
-        newPie.datasets[0].data = Object.values(pieD);
-        setFileTypePieData(prev => newPie);
+            const newFilePlotData = structuredClone(initialPlotData);
+            newFilePlotData.labels = Object.keys(fileMap);
+            newFilePlotData.datasets[0].data = Object.values(fileMap);
+            newFilePlotData.datasets[0].label = "Files Uploaded";
+            newFilePlotData.datasets[0].backgroundColor = "#f26b5a";
+            newFilePlotData.datasets[0].borderColor = "#d8b7bc";
+            setPlotFileData(prev => newFilePlotData);
+
+            const pieD = getPiePlotFileData(data);
+            const newPie = structuredClone(fileTypePieInitialData);
+            newPie.labels = Object.keys(pieD);
+            newPie.datasets[0].data = Object.values(pieD);
+            setFileTypePieData(prev => newPie);
+        } catch (error) {
+            console.log("Fetch File Error", error);
+            toast.error("Fetch File Error");
+        } finally {
+            setFileLoading(prev => false);
+        }
     };
 
     const fetchData = async () => {
-        setFriendsCount(prev =>
-            userInfo.friends ? userInfo.friends.length : 0
-        );
-        // load iff chats not loaded
-        let allChats = [];
-        if (!chatInfo.chats?.length) allChats = await fetchChats().unwrap();
-        else allChats = chatInfo.chats;
-        setChatCount(prev => allChats.length);
-        setMyChats(prev => allChats);
+        try {
+            setChatLoading(prev => true);
+
+            setFriendsCount(prev =>
+                userInfo.friends ? userInfo.friends.length : 0
+            );
+            // load iff chats not loaded
+            let allChats = [];
+            if (!chatInfo.chats?.length) allChats = await fetchChats().unwrap();
+            else allChats = chatInfo.chats;
+            setChatCount(prev => allChats.length);
+            setMyChats(prev => allChats);
+        } catch (error) {
+            console.log("Fetch Chats Error", error);
+            toast.error("Fetch Chats Error");
+        } finally {
+            setChatLoading(prev => false);
+        }
     };
 
     useEffect(() => {
@@ -217,6 +241,7 @@ const DashboardScreen = () => {
                                 number={friendsCount}
                                 Icon={FaUserFriends}
                                 description="Friends"
+                                loading={chatLoading}
                             />
                         </Col>
                         <Col sm={6} md={6} className="py-3">
@@ -224,6 +249,7 @@ const DashboardScreen = () => {
                                 number={chatCount}
                                 Icon={IoMdChatboxes}
                                 description="Chats"
+                                loading={chatLoading}
                             />
                         </Col>
 
@@ -232,6 +258,7 @@ const DashboardScreen = () => {
                                 number={messagesCount}
                                 Icon={FaEnvelope}
                                 description="Messages Sent"
+                                loading={messageLoading}
                             />
                         </Col>
 
@@ -246,6 +273,7 @@ const DashboardScreen = () => {
                                 }
                                 Icon={TiMessages}
                                 description="Average Messages Per Chat"
+                                loading={messageLoading}
                             />
                         </Col>
                         <Col sm={6} md={6} className="py-3">
@@ -257,6 +285,7 @@ const DashboardScreen = () => {
                                         ? `Total Messages shared in Favourite Group "${favouriteGroup}"`
                                         : "No Favourite Group"
                                 }
+                                loading={messageLoading}
                             />
                         </Col>
                         <Col sm={6} md={6} className="py-3">
@@ -268,6 +297,7 @@ const DashboardScreen = () => {
                                         ? `Total Messages shared with favourite friend "${favouriteFriend}"`
                                         : "No Favourite Friend"
                                 }
+                                loading={messageLoading}
                             />
                         </Col>
                         <Col sm={6} md={6} className="py-3">
@@ -275,6 +305,7 @@ const DashboardScreen = () => {
                                 number={myFilesCount}
                                 Icon={FaFileAlt}
                                 description="Personal Files stored"
+                                loading={fileLoading}
                             />
                         </Col>
                         <Col sm={6} md={6} className="py-3">
@@ -282,6 +313,7 @@ const DashboardScreen = () => {
                                 number={avgFileSize}
                                 Icon={FaFileInvoice}
                                 description="Average File Size"
+                                loading={fileLoading}
                             />
                         </Col>
                     </Row>
