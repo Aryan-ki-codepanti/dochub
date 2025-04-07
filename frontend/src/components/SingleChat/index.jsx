@@ -41,7 +41,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
     // SOCKET IO logic
     useEffect(() => {
-        socket = io(BACKEND_ENDPOINT);
+        socket =
+            import.meta.env.MODE === "development"
+                ? io(BACKEND_ENDPOINT)
+                : io();
         socket.emit("setup", userInfo);
         socket.on("connected", () => setSocketConnected(prev => true));
         socket.on("typing", () => setIsTyping(true));

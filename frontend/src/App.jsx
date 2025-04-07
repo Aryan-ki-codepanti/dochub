@@ -15,7 +15,10 @@ const App = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        socket = io(import.meta.env.VITE_APP_BACKEND_URL);
+        socket =
+            import.meta.env.MODE === "development"
+                ? io(import.meta.env.VITE_APP_BACKEND_URL)
+                : io();
         dispatch(setMySocket(socket));
         if (userInfo?._id) socket.emit("heartbeat", userInfo._id);
         return () => {
