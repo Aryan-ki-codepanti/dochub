@@ -12,6 +12,7 @@ import messageRoutes from "./routes/messageRoutes.js";
 import fileRoutes from "./routes/fileRoutes.js";
 import { Server } from "socket.io";
 import { deleteMapEntryByValue, reverseLookup } from "./utils/mapUtils.js";
+import cors from "cors";
 
 const port = process.env.PORT || 5000;
 
@@ -22,6 +23,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+app.use(
+    cors({
+        origin: process.env.REACT_APP_FRONTEND,
+        credentials: true
+    })
+);
 
 // users
 app.use("/api/users", userRoutes);
@@ -58,7 +66,7 @@ const server = app.listen(port, () =>
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000" // CHANGE
+        origin: process.env.REACT_APP_FRONTEND // CHANGE
     },
     pingTimeout: 60000
 });
