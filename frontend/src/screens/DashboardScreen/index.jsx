@@ -167,10 +167,15 @@ const DashboardScreen = () => {
         try {
             const data = await getFilesInfoAPI().unwrap();
             setMyFilesCount(prev => data.length);
-            let s = Math.floor(
-                data.reduce((acc, f) => acc + f.size, 0) / data.length
-            );
+
+            let s;
+            if (data.length > 0) {
+                s = Math.floor(
+                    data.reduce((acc, f) => acc + f.size, 0) / data.length
+                );
+            } else s = 0;
             setAvgFileSize(prev => filesize(s));
+
             const fileMap = getPlotFileData(data);
 
             const newFilePlotData = structuredClone(initialPlotData);
